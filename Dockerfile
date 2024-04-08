@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
 LABEL maintainer=fscorrupt
-LABEL org.opencontainers.image.source https://github.com/fscorrupt/docker-posterizarr
+LABEL org.opencontainers.image.source https://github.com/fscorrupt/docker-posterizarr-dev
 RUN apk update
 RUN apk add --no-cache \
     python3 \
