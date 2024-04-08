@@ -16,7 +16,7 @@ services:
     networks:
       - "proxy"
     volumes:
-      - "/opt/appdata/posterizarr:/config:rw"
+      - "/opt/appdata/posterizarr-dev:/config:rw"
 networks:
   proxy:
     driver: bridge
