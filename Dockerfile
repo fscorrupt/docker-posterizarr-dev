@@ -6,7 +6,8 @@ RUN apk add --no-cache \
     python3 \
     py3-pip \
     imagemagick \
-    tini
+    tini \
+    docker-cli
 RUN pip3 install apprise
 RUN pwsh -c "Install-Module FanartTvAPI -Force -SkipPublisherCheck -AllowPrerelease"
 RUN mkdir /config
