@@ -105,7 +105,7 @@ function ScriptSchedule {
 }
 function GetLatestScriptVersion {
     try {
-        return Invoke-RestMethod -Uri "https://github.com/fscorrupt/Posterizarr/raw/dev/Release.txt" -Method Get -ErrorAction Stop
+        return Invoke-RestMethod -Uri "https://github.com/fscorrupt/Posterizarr/raw/main/Release.txt" -Method Get -ErrorAction Stop
     }
     catch {
         Write-Entry -Subtext "Could not query latest script version, Error: $($_.Exception.Message)" -Path $global:ScriptRoot\Logs\Scriptlog.log -Color Red -log Error
@@ -138,8 +138,8 @@ $ProgressPreference = 'SilentlyContinue'
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/overlay.png" -destination $PSScriptRoot\config\overlay.png
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/backgroundoverlay.png" -destination $PSScriptRoot\config\backgroundoverlay.png
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Rocky.ttf" -destination $PSScriptRoot\config\Rocky.ttf
-Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/dev/Posterizarr.ps1" -OutFile $PSScriptRoot\Posterizarr.ps1
-Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/dev/config.example.json" -OutFile $PSScriptRoot\config\config.example.json
+Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/Posterizarr.ps1" -OutFile $PSScriptRoot\Posterizarr.ps1
+Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/config.example.json" -OutFile $PSScriptRoot\config\config.example.json
 $ProgressPreference = 'Continue'
 
 # Create Folders
