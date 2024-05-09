@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
 LABEL maintainer=fscorrupt
 LABEL org.opencontainers.image.source https://github.com/fscorrupt/docker-posterizarr
 
-# Update and install packages
+# Update and install packages from the edge community repository
 RUN echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
     && apk update \
     && apk add --no-cache \
