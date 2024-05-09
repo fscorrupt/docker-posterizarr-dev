@@ -5,24 +5,16 @@ FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
 LABEL maintainer=fscorrupt
 LABEL org.opencontainers.image.source https://github.com/fscorrupt/docker-posterizarr
 
-# Install necessary tools
-RUN apk update && apk add --no-cache \
-    wget \
-    ca-certificates
-
-# Download ImageMagick
-RUN wget https://nl.alpinelinux.org/alpine/edge/community/x86_64/imagemagick-7.1.1.32-r0.apk
-
-# Continue with other installations
-RUN apk add --no-cache --allow-untrusted \
-    python3 \
-    py3-pip \
-    tini \
-    docker-cli \
-    imagemagick-7.1.1.32-r0.apk
-
-# Remove Downloaded Imagemagick file
-RUN rm imagemagick-7.1.1.32-r0.apk
+# Add the Edge Community repository and update
+RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
+    && apk upgrade --update-cache --available \
+    && apk add --no-cache \
+        python3 \
+        py3-pip \
+        imagemagick-libs@edge \
+        imagemagick@edge \
+        tini \
+        docker-cli
 
 # Install Python library
 RUN pip3 install apprise
