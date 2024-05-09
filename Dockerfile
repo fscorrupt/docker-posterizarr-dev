@@ -5,9 +5,10 @@ RUN apk update
 RUN apk add --no-cache \
     python3 \
     py3-pip \
-    imagemagick \
     tini \
     docker-cli
+RUN echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
+    && apk add --no-cache imagemagick@edge
 RUN pip3 install apprise
 RUN pwsh -c "Install-Module FanartTvAPI -Force -SkipPublisherCheck -AllowPrerelease"
 RUN mkdir /config
