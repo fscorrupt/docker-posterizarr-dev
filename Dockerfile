@@ -10,16 +10,19 @@ RUN apk update && apk add --no-cache \
     wget \
     ca-certificates
 
-# Download and install ImageMagick directly
-RUN wget https://nl.alpinelinux.org/alpine/edge/community/x86_64/imagemagick-7.1.1.32-r0.apk \
-    && apk add --allow-untrusted imagemagick-7.1.1.32-r0.apk
+# Download ImageMagick
+RUN wget https://nl.alpinelinux.org/alpine/edge/community/x86_64/imagemagick-7.1.1.32-r0.apk
 
 # Continue with other installations
-RUN apk add --no-cache \
+RUN apk add --no-cache --allow-untrusted \
     python3 \
     py3-pip \
     tini \
-    docker-cli
+    docker-cli \
+    imagemagick-7.1.1.32-r0.apk
+
+# Remove Downloaded Imagemagick file
+RUN rm imagemagick-7.1.1.32-r0.apk
 
 # Install Python library
 RUN pip3 install apprise
