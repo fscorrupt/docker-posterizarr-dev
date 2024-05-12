@@ -138,6 +138,7 @@ $ProgressPreference = 'SilentlyContinue'
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/overlay.png" -destination $PSScriptRoot\config\overlay.png
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/backgroundoverlay.png" -destination $PSScriptRoot\config\backgroundoverlay.png
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Rocky.ttf" -destination $PSScriptRoot\config\Rocky.ttf
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Comfortaa-Medium.ttf" -destination $PSScriptRoot\config\Comfortaa-Medium.ttf
 Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/Posterizarr.ps1" -OutFile $PSScriptRoot\Posterizarr.ps1
 Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/config.example.json" -OutFile $PSScriptRoot\config\config.example.json
 $ProgressPreference = 'Continue'
@@ -171,6 +172,15 @@ if (-not (test-path "$PSScriptRoot\config\config.json")) {
     )
 }
 
+# Check temp dir if there is a Currently running file present
+$CurrentlyRunning = "$PSScriptRoot\config\temp\Posterizarr.Running"
+
+
+# Clear Running File
+if (Test-Path $CurrentlyRunning) {
+    Remove-Item -LiteralPath $CurrentlyRunning | out-null
+    write-host "Cleared .running file..." -ForegroundColor Green
+}
 # Show integraded Scripts
 $StartTime = Get-Date
 write-host "Container Started..." -ForegroundColor Green
