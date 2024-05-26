@@ -3,7 +3,8 @@ on:
   push:
     branches-ignore:
       - 'dependabot/**'
-
+  schedule:
+    - cron: '0 5 * * *'
 jobs:
   GHRC:
     runs-on: ubuntu-latest
