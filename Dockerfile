@@ -5,12 +5,14 @@ FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
 # Labels
 LABEL maintainer=fscorrupt
 LABEL org.opencontainers.image.source https://github.com/fscorrupt/docker-posterizarr
+
 # Create a user with specified UID and GID
 ARG PUID=1000
 ARG PGID=1000
-RUN groupadd -g ${PGID} posterizarrgroup && \
-    useradd -u ${PUID} -g posterizarrgroup -m posterizarr
-    
+RUN addgroup -g ${PGID} posterizarrgroup && \
+    adduser -u ${PUID} -G posterizarrgroup -h /home/posterizarr -D posterizarr
+
+# Switch to the new user
 USER posterizarr
 
 # Add the Edge Community repository and update
