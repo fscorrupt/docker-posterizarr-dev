@@ -50,6 +50,21 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_PAT }}
 
+      - name: Build and push GHRC.io
+        id: docker_build
+        uses: docker/build-push-action@v5.1.0
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/armhf,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ghcr.io/${{ steps.prep.outputs.tags }}
+          labels: |
+            org.opencontainers.image.title=${{ steps.prep.outputs.title }}
+            org.opencontainers.image.version=${{ steps.prep.outputs.version }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+
       - name: Build Docker image (linux/amd64)
         uses: docker/build-push-action@v5.1.0
         with:
@@ -59,7 +74,7 @@ jobs:
           push: false
           load: true
           file: ./Dockerfile
-          tags: ghcr.io/${{ steps.prep.outputs.tags }}:linux-amd64
+          tags: ghcr.io/fscorrupt/docker-posterizarr-dev-amd64:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           labels: |
@@ -76,7 +91,7 @@ jobs:
           push: false
           load: true
           file: ./Dockerfile
-          tags: ghcr.io/${{ steps.prep.outputs.tags }}:linux-arm-v7
+          tags: ghcr.io/fscorrupt/docker-posterizarr-dev-arm7:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           labels: |
@@ -93,7 +108,7 @@ jobs:
           push: false
           load: true
           file: ./Dockerfile
-          tags: ghcr.io/${{ steps.prep.outputs.tags }}:linux-arm64-v8
+          tags: ghcr.io/fscorrupt/docker-posterizarr-dev-arm64v8:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           labels: |
