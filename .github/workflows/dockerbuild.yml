@@ -60,7 +60,6 @@ jobs:
           load: true
           file: ./Dockerfile
           tags: ghcr.io/${{ steps.prep.outputs.tags }}:linux-amd64
-          push: ${{ github.event_name != 'pull_request' }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           labels: |
@@ -78,7 +77,6 @@ jobs:
           load: true
           file: ./Dockerfile
           tags: ghcr.io/${{ steps.prep.outputs.tags }}:linux-arm-v7
-          push: ${{ github.event_name != 'pull_request' }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           labels: |
@@ -96,13 +94,12 @@ jobs:
           load: true
           file: ./Dockerfile
           tags: ghcr.io/${{ steps.prep.outputs.tags }}:linux-arm64-v8
-          push: ${{ github.event_name != 'pull_request' }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           labels: |
             org.opencontainers.image.title=${{ steps.prep.outputs.title }}
             org.opencontainers.image.version=${{ steps.prep.outputs.version }}
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
-            
+
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
