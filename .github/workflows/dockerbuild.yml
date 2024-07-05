@@ -1,9 +1,9 @@
 name: Build Multi Stage Docker Image
 on:
   push:
-    branches-ignore:
-      - 'dependabot/**'
-
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
 jobs:
   GHRC:
     runs-on: ubuntu-latest
