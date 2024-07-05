@@ -16,9 +16,11 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         libjpeg-turbo-dev \
         imagemagick-libs@edge \
         imagemagick@edge \
-        tini \
         docker-cli
-
+ENV TINI_VERSION v0.19.0
+ARG TARGETARCH
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-${TARGETARCH} /tini
+RUN chmod +x /tini
 # Install Python library
 RUN pip3 install apprise
 
@@ -32,4 +34,4 @@ RUN mkdir /config
 COPY Start.ps1 .
 
 # Set the entrypoint
-ENTRYPOINT ["/sbin/tini", "-s", "pwsh", "Start.ps1", "--"]
+ENTRYPOINT ["/tini", "-s", "pwsh", "Start.ps1", "--"]
