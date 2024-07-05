@@ -58,6 +58,7 @@ jobs:
           context: .
           file: ./Dockerfile
           multiPlatform: true
+          registry: ghcr.io
           image: ${{ steps.prep.outputs.tags }}
           platforms: linux/amd64,linux/armhf,linux/arm64,linux/arm/v7
           push: ${{ github.event_name != 'pull_request' }}
