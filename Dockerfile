@@ -1,7 +1,7 @@
 # Base Image
 # https://mcr.microsoft.com/v2/powershell/tags/list
 FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
-
+ENV TINI_VERSION=v0.19.0
 # Labels
 LABEL maintainer=fscorrupt
 LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-posterizarr
@@ -17,10 +17,8 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         imagemagick-libs@edge \
         imagemagick@edge \
         docker-cli
-ENV TINI_VERSION v0.19.0
-ARG TARGETARCH
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-${TARGETARCH} /tini
-RUN chmod +x /tini
+     && wget -O /tini https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-"$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+     && chmod +x /tini \
 # Install Python library
 RUN pip3 install apprise
 
