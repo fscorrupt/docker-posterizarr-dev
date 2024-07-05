@@ -16,9 +16,9 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         libjpeg-turbo-dev \
         imagemagick-libs@edge \
         imagemagick@edge \
-        docker-cli \
-     && wget -O /tini https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-"$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
-     && chmod +x /tini
+        docker-cli
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-${TARGETARCH} /tini
+RUN chmod +x /tini
 # Install Python library
 RUN pip3 install apprise
 
