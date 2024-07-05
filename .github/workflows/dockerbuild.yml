@@ -63,6 +63,8 @@ jobs:
           platforms: linux/amd64,linux/armhf,linux/arm64,linux/arm/v7
           push: ${{ github.event_name != 'pull_request' }}
           tags: ghcr.io/${{ steps.prep.outputs.tags }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
           labels: |
             org.opencontainers.image.title=${{ steps.prep.outputs.title }}
             org.opencontainers.image.version=${{ steps.prep.outputs.version }}
