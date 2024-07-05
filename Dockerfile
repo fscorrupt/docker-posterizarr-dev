@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
 
 # Labels
 LABEL maintainer=fscorrupt
-LABEL org.opencontainers.image.source https://github.com/fscorrupt/docker-posterizarr
+LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-posterizarr
     
 # Add the Edge Community repository and update
 RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
