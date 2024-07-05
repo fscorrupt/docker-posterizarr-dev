@@ -2,6 +2,7 @@
 # https://mcr.microsoft.com/v2/powershell/tags/list
 FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
 ENV TINI_VERSION=v0.19.0
+ARG TARGETARCH
 # Labels
 LABEL maintainer=fscorrupt
 LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-posterizarr
