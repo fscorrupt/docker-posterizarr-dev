@@ -1,7 +1,6 @@
 # Base Image
 # https://mcr.microsoft.com/v2/powershell/tags/list
 FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
-FROM --platform=${BUILDPLATFORM} alpine as tini-binary
 ENV TINI_VERSION=v0.19.0
 # Use BuildKit to help translate architecture names
 ARG TARGETPLATFORM
@@ -42,6 +41,6 @@ RUN mkdir /config
 
 # Copy the PowerShell script into the container
 COPY Start.ps1 .
-COPY --from=tini-binary /tini /usr/local/bin/tini
+COPY /tini /usr/local/bin/tini
 # Set the entrypoint
 ENTRYPOINT ["/tini", "-s", "pwsh", "Start.ps1", "--"]
