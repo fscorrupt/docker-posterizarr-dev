@@ -41,6 +41,6 @@ RUN mkdir /config
 
 # Copy the PowerShell script into the container
 COPY Start.ps1 .
-COPY /tini /usr/local/bin/tini
+
 # Set the entrypoint
 ENTRYPOINT ["/tini", "-s", "pwsh", "Start.ps1", "--"]
