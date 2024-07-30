@@ -28,6 +28,7 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         py3-pip \
         imagemagick-libs@edge \
         imagemagick@edge \
+        libjpeg-turbo-dev@edge \
         libpng-dev@edge \
         docker-cli
 
