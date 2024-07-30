@@ -36,7 +36,6 @@ RUN apk upgrade --update-cache --available \
         pkgconfig \
         python3 \
         py3-pip \
-        libjpeg-turbo \
         libjpeg-turbo-dev \
         libpng-dev \
         freetype-dev \
