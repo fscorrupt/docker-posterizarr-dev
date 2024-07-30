@@ -24,8 +24,7 @@ LABEL maintainer=fscorrupt
 LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-posterizarr
 
 # Install build dependencies and prerequisites
-RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
-    && apk upgrade --update-cache --available \
+RUN apk upgrade --update-cache --available \
     && apk update \
     && apk add --no-cache \
         build-base \
@@ -46,8 +45,6 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         libwebp-dev \
         lcms2-dev \
         fftw-dev \
-        imagemagick-libs@edge \
-        imagemagick@edge \
         docker-cli
 
 # Download and build ImageMagick from source
