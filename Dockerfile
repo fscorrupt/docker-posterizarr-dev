@@ -31,6 +31,21 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         imagemagick@edge \
         imagemagick-jpeg@edge \
         docker-cli
+        
+# Create or Modify delegates.xml for JPEG support
+RUN mkdir -p /etc/ImageMagick-7 \
+    && echo '<?xml version="1.0" encoding="UTF-8"?> \
+<!DOCTYPE delegates [ \
+<!ELEMENT delegates (delegate*)> \
+<!ELEMENT delegate (#PCDATA)> \
+<!ATTLIST delegate decode CDATA #IMPLIED \
+                  encode CDATA #IMPLIED \
+                  stealth (True|False) "False" \
+                  command CDATA #REQUIRED>]> \
+<delegates> \
+  <delegate decode="jpeg" command="&quot;djpeg&quot; -colorspace RGB -dct int -verbose -onepass -dither none -scale &quot;%wx%h&quot; &quot;%i&quot; -out &quot;%o&quot;"/> \
+  <delegate encode="jpeg" command="&quot;cjpeg&quot; -quality &quot;%Q&quot; -optimize -progressive -verbose -outfile &quot;%o&quot; &quot;%i&quot;"/> \
+</delegates>' > /etc/ImageMagick-7/delegates.xml
 
 # Install Python library
 RUN pip3 install apprise
