@@ -2,6 +2,7 @@
 # https://mcr.microsoft.com/v2/powershell/tags/list
 FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
 ENV TINI_VERSION=v0.19.0
+
 # Use BuildKit to help translate architecture names
 ARG TARGETPLATFORM
 # translating Docker's TARGETPLATFORM into tini download names
@@ -32,20 +33,11 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         imagemagick-jpeg@edge \
         docker-cli
         
-# Create or Modify delegates.xml for JPEG support
-RUN mkdir -p /etc/ImageMagick-7 \
-    && echo '<?xml version="1.0" encoding="UTF-8"?> \
-<!DOCTYPE delegates [ \
-<!ELEMENT delegates (delegate*)> \
-<!ELEMENT delegate (#PCDATA)> \
-<!ATTLIST delegate decode CDATA #IMPLIED \
-                  encode CDATA #IMPLIED \
-                  stealth (True|False) "False" \
-                  command CDATA #REQUIRED>]> \
-<delegates> \
+# Append to delegates.xml for JPEG support
+RUN sed -i '/<\/delegates>/i \
   <delegate decode="jpeg" command="&quot;djpeg&quot; -colorspace RGB -dct int -verbose -onepass -dither none -scale &quot;%wx%h&quot; &quot;%i&quot; -out &quot;%o&quot;"/> \
-  <delegate encode="jpeg" command="&quot;cjpeg&quot; -quality &quot;%Q&quot; -optimize -progressive -verbose -outfile &quot;%o&quot; &quot;%i&quot;"/> \
-</delegates>' > /etc/ImageMagick-7/delegates.xml
+  <delegate encode="jpeg" command="&quot;cjpeg&quot; -quality &quot;%Q&quot; -optimize -progressive -verbose -outfile &quot;%o&quot; &quot;%i&quot;"/>' /etc/ImageMagick-7/delegates.xml
+
 
 # Install Python library
 RUN pip3 install apprise
