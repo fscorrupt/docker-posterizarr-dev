@@ -1,22 +1,8 @@
 # Base Image
 # https://mcr.microsoft.com/v2/powershell/tags/list
+# Imagemagick 7.1.1.34
 FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
-ENV TINI_VERSION=v0.19.0
-ENV MAGICK_CODER_MODULE_PATH=/usr/lib/ImageMagick-7.1.1/modules-Q16HDRI/coders
 
-# Use BuildKit to help translate architecture names
-ARG TARGETPLATFORM
-# translating Docker's TARGETPLATFORM into tini download names
-RUN case ${TARGETPLATFORM} in \
-         "linux/amd64")  TINI_ARCH=amd64  ;; \
-         "linux/arm64")  TINI_ARCH=arm64  ;; \
-         "linux/arm/v7") TINI_ARCH=armhf  ;; \
-         "linux/arm/v6") TINI_ARCH=armel  ;; \
-         "linux/386")    TINI_ARCH=i386   ;; \
-    esac \
- && wget -q https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-${TINI_ARCH} -O /tini \
- && chmod +x /tini
- 
 # Labels
 LABEL maintainer=fscorrupt
 LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-posterizarr
@@ -31,13 +17,9 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         libjpeg-turbo-dev \
         imagemagick-libs@edge \
         imagemagick@edge \
-        imagemagick-jpeg@edge \
+        tini \
         docker-cli
-        
-# Append to delegates.xml for JPEG support
-RUN echo '<delegate decode="jpeg" command="&quot;djpeg&quot; -colorspace RGB -dct int -verbose -onepass -dither none -scale &quot;%wx%h&quot; &quot;%i&quot; -out &quot;%o&quot;"/>' >> /etc/ImageMagick-7/delegates.xml \
-    && echo '<delegate encode="jpeg" command="&quot;cjpeg&quot; -quality &quot;%Q&quot; -optimize -progressive -verbose -outfile &quot;%o&quot; &quot;%i&quot;"/>' >> /etc/ImageMagick-7/delegates.xml
-    
+
 # Install Python library
 RUN pip3 install apprise
 
@@ -51,4 +33,4 @@ RUN mkdir /config
 COPY Start.ps1 .
 
 # Set the entrypoint
-ENTRYPOINT ["/tini", "-s", "pwsh", "Start.ps1", "--"]
+ENTRYPOINT ["/sbin/tini", "-s", "pwsh", "Start.ps1", "--"]
