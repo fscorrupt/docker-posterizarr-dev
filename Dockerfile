@@ -26,9 +26,10 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
     && apk add --no-cache \
         python3 \
         py3-pip \
-        libjpeg-turbo \
+        libjpeg-turbo-dev \
         imagemagick-libs@edge \
         imagemagick@edge \
+        imagemagick-jpeg@edge \
         docker-cli
 # Install Python library
 RUN pip3 install apprise
