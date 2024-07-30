@@ -42,7 +42,7 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         libpng-dev \
         freetype-dev \
         fontconfig-dev \
-        libtiff-dev \
+        tiff-dev \
         libwebp-dev \
         lcms2-dev \
         fftw-dev \
