@@ -29,9 +29,7 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         imagemagick-libs@edge \
         imagemagick@edge \
         libjpeg-turbo-dev@edge \
-        libjpeg-dev@edge \
         libpng-dev@edge \
-        libfreetype-dev@edge \
         docker-cli
 
 # Install Python library
