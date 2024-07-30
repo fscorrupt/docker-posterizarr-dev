@@ -2,6 +2,7 @@
 # https://mcr.microsoft.com/v2/powershell/tags/list
 FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
 ENV TINI_VERSION=v0.19.0
+ENV MAGICK_CODER_MODULE_PATH=/usr/lib/ImageMagick-7.1.1/modules-Q16HDRI/coders
 
 # Use BuildKit to help translate architecture names
 ARG TARGETPLATFORM
@@ -34,11 +35,9 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         docker-cli
         
 # Append to delegates.xml for JPEG support
-RUN sed -i '/<\/delegates>/i \
-  <delegate decode="jpeg" command="&quot;djpeg&quot; -colorspace RGB -dct int -verbose -onepass -dither none -scale &quot;%wx%h&quot; &quot;%i&quot; -out &quot;%o&quot;"/> \
-  <delegate encode="jpeg" command="&quot;cjpeg&quot; -quality &quot;%Q&quot; -optimize -progressive -verbose -outfile &quot;%o&quot; &quot;%i&quot;"/>' /etc/ImageMagick-7/delegates.xml
-
-
+RUN echo '<delegate decode="jpeg" command="&quot;djpeg&quot; -colorspace RGB -dct int -verbose -onepass -dither none -scale &quot;%wx%h&quot; &quot;%i&quot; -out &quot;%o&quot;"/>' >> /etc/ImageMagick-7/delegates.xml \
+    && echo '<delegate encode="jpeg" command="&quot;cjpeg&quot; -quality &quot;%Q&quot; -optimize -progressive -verbose -outfile &quot;%o&quot; &quot;%i&quot;"/>' >> /etc/ImageMagick-7/delegates.xml
+    
 # Install Python library
 RUN pip3 install apprise
 
