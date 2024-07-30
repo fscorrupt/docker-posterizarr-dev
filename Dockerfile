@@ -38,6 +38,7 @@ RUN apk upgrade --update-cache --available \
         py3-pip \
         libjpeg-turbo-dev \
         libpng-dev \
+        libxml2-dev \
         freetype-dev \
         fontconfig-dev \
         tiff-dev \
