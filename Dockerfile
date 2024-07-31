@@ -9,13 +9,14 @@ LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-poster
     
 # Add the Edge Community repository and update
 RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
+    && echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories \
     && apk upgrade --update-cache --available \
     && apk update \
     && apk add --no-cache \
         python3 \
         py3-pip \
         imagemagick-libs@edge \
-        libjpeg-turbo@edge \
+        libjpeg-turbo-dev@edge \
         imagemagick@edge \
         tini \
         docker-cli
