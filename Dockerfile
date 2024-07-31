@@ -14,8 +14,8 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
     && apk add --no-cache \
         python3 \
         py3-pip \
-        libjpeg-turbo-dev@edge \
         imagemagick-libs@edge \
+        libjpeg-turbo@edge \
         imagemagick@edge \
         tini \
         docker-cli
