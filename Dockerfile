@@ -18,8 +18,6 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         imagemagick-libs@edge \
         libjpeg-turbo-dev@edge \
         imagemagick@edge \
-        pango@edge \
-        cairo@edge \
         tini \
         docker-cli
 
