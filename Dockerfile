@@ -19,15 +19,11 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         libjpeg-turbo-dev@edge \
         imagemagick@edge \
         tini \
-        docker-cli \
-        glibc-i18n
+        docker-cli
 
-# Generate all locales, including RTL languages
-RUN /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 \
-    && /usr/glibc-compat/bin/localedef -i ar_EG -f UTF-8 ar_EG.UTF-8 \
-    && /usr/glibc-compat/bin/localedef -i he_IL -f UTF-8 he_IL.UTF-8 \
-    && /usr/glibc-compat/bin/localedef -i fa_IR -f UTF-8 fa_IR.UTF-8 \
-    && /usr/glibc-compat/bin/localedef -i ur_PK -f UTF-8 ur_PK.UTF-8
+# Set UTF-8 Locale Environment Variables
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 
 # Install Python library
 RUN pip3 install apprise
