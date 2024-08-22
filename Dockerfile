@@ -1,7 +1,8 @@
 # Base Image
 # https://mcr.microsoft.com/v2/powershell/tags/list
 # Imagemagick 7.1.1.34
-FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
+# FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
+FROM demisto/powershell:7.4.2.103657
 
 # Labels
 LABEL maintainer=fscorrupt
@@ -20,12 +21,6 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         imagemagick@edge \
         tini \
         docker-cli
-
-RUN apt-get install -y locales && \
-    locale-gen C.UTF-8 && \
-    /usr/sbin/update-locale LANG=C.UTF-8
-
-ENV LC_ALL C.UTF-8
 
 # Install Python library
 RUN pip3 install apprise
