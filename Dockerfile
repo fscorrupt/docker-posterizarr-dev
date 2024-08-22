@@ -20,13 +20,7 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         imagemagick@edge \
         tini \
         docker-cli \
-        glibc-i18n \
-        fontconfig \
-        ttf-dejavu \
-        ttf-droid \
-        ttf-freefont \
-        ttf-liberation \
-        ttf-ubuntu-font-family
+        glibc-i18n
 
 # Generate all locales, including RTL languages
 RUN /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 \
