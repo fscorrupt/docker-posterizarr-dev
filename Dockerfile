@@ -21,9 +21,11 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         tini \
         docker-cli
 
-# Set UTF-8 Locale Environment Variables
-ENV LANG=en_US.UTF-8
-ENV LC_ALL=en_US.UTF-8
+RUN apt-get install -y locales && \
+    locale-gen C.UTF-8 && \
+    /usr/sbin/update-locale LANG=C.UTF-8
+
+ENV LC_ALL C.UTF-8
 
 # Install Python library
 RUN pip3 install apprise
