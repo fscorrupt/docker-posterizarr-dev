@@ -1,8 +1,8 @@
 # Base Image
 # https://mcr.microsoft.com/v2/powershell/tags/list
 # Imagemagick 7.1.1.34
-# FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
-FROM demisto/powershell:7.4.2.103657
+FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
+# FROM demisto/powershell:7.4.2.103657
 
 # Labels
 LABEL maintainer=fscorrupt
@@ -20,7 +20,21 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         libjpeg-turbo-dev@edge \
         imagemagick@edge \
         tini \
-        docker-cli
+        docker-cli \
+        cmake \
+        make \
+        musl-dev \
+        gcc \
+        gettext-dev \
+        libintl
+
+# Build and install the locale program for musl libc
+RUN git clone https://github.com/fscorrupt/musl-locale.git /tmp/musl-locale \
+    && cd /tmp/musl-locale \
+    && cmake . \
+    && make \
+    && make install \
+    && rm -rf /tmp/musl-locale
 
 # Install Python library
 RUN pip3 install apprise
