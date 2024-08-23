@@ -29,14 +29,6 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         gettext-dev \
         libintl
 
-# Build and install the locale program for musl libc
-RUN git clone https://github.com/fscorrupt/musl-locale.git /tmp/musl-locale \
-    && cd /tmp/musl-locale \
-    && cmake . \
-    && make \
-    && make install \
-    && rm -rf /tmp/musl-locale
-
 # Install Python library
 RUN pip3 install apprise
 
