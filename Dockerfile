@@ -1,33 +1,21 @@
 # Base Image
 # https://mcr.microsoft.com/v2/powershell/tags/list
-# Imagemagick 7.1.1.34
-FROM mcr.microsoft.com/powershell:7.4-alpine-3.17
-# FROM demisto/powershell:7.4.2.103657
+# Imagemagick 7.1.1.36
+FROM mcr.microsoft.com/powershell:7.4-ubuntu-22.04
 
 # Labels
 LABEL maintainer=fscorrupt
 LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-posterizarr
 
-# Add the Edge Community repository and update
-RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
-    && echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories \
-    && apk upgrade --update-cache --available \
-    && apk update \
-    && apk add --no-cache \
+# Update the package list and install dependencies
+RUN apt-get update && apt-get upgrade -y \
+    && apt-get install -y \
         python3 \
-        py3-pip \
-        imagemagick-libs@edge \
-        libjpeg-turbo-dev@edge \
-        imagemagick@edge \
+        python3-pip \
+        imagemagick \
+        libjpeg-turbo8-dev \
         tini \
-        git \
-        docker-cli \
-        cmake \
-        make \
-        musl-dev \
-        gcc \
-        gettext-dev \
-        libintl
+        docker.io
 
 # Install Python library
 RUN pip3 install apprise
@@ -42,4 +30,4 @@ RUN mkdir /config
 COPY Start.ps1 .
 
 # Set the entrypoint
-ENTRYPOINT ["/sbin/tini", "-s", "pwsh", "Start.ps1", "--"]
+ENTRYPOINT ["/usr/bin/tini", "-s", "pwsh", "Start.ps1", "--"]
