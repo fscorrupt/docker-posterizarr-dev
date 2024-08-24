@@ -10,6 +10,7 @@ LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-poster
 # Update the package list and install dependencies
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y \
+        software-properties-common \
         python3 \
         python3-pip \
         tini \
