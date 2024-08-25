@@ -23,7 +23,9 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         pango \
         cairo \
         fribidi \
-        harfbuzz
+        harfbuzz \
+        ttf-dejavu \
+        ttf-freefont
 
 # Install Python library
 RUN pip3 install apprise
