@@ -18,10 +18,10 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         imagemagick-libs@edge \
         libjpeg-turbo-dev@edge \
         imagemagick@edge \
-        pango@edge \
-        cairo@edge \
-        fribidi@edge \
-        harfbuzz@edge \
+        pango \
+        cairo \
+        fribidi \
+        harfbuzz \
         ttf-dejavu \
         ttf-freefont \
         tini \
