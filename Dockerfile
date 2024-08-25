@@ -18,14 +18,14 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         imagemagick-libs@edge \
         libjpeg-turbo-dev@edge \
         imagemagick@edge \
-        tini \
-        docker-cli \
-        pango \
-        cairo \
-        fribidi \
-        harfbuzz \
+        pango@edge \
+        cairo@edge \
+        fribidi@edge \
+        harfbuzz@edge \
         ttf-dejavu \
-        ttf-freefont
+        ttf-freefont \
+        tini \
+        docker-cli
 
 # Install Python library
 RUN pip3 install apprise
