@@ -23,8 +23,7 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
         pango \
         cairo \
         fribidi \
-        harfbuzz \
-    && apt-get clean
+        harfbuzz
 
 # Install Python library
 RUN pip3 install apprise
