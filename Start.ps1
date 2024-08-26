@@ -113,16 +113,18 @@ function GetLatestScriptVersion {
     }
 }
 function CompareScriptVersion {
+    # Current Imagemagick Version
     $magick = 'magick'
     $CurrentImagemagickversion = & $magick -version
     $CurrentImagemagickversion = [regex]::Match($CurrentImagemagickversion, 'Version: ImageMagick (\d+(\.\d+){1,2}-\d+)')
     $CurrentImagemagickversion = $CurrentImagemagickversion.Groups[1].Value.replace('-', '.')
+    
+    # Latest Imagemagick Version
     $Url = "https://pkgs.alpinelinux.org/package/edge/community/x86_64/imagemagick"
     $response = Invoke-WebRequest -Uri $url
     $htmlContent = $response.Content
     $regexPattern = '<th class="header">Version<\/th>\s*<td>\s*<strong>\s*<a[^>]*>([^<]+)<\/a>\s*<\/strong>\s*<\/td>'
     $Versionmatching = [regex]::Matches($htmlContent, $regexPattern)
-    $LatestImagemagickversion = $LatestImagemagickversion.replace('-', '.')
 
     if ($Versionmatching.Count -gt 0) {
         $LatestImagemagickversion = $Versionmatching[0].Groups[1].Value.split('-')[0]
@@ -136,7 +138,7 @@ function CompareScriptVersion {
         write-host "Current Script Version: $version | Latest Script Version: $LatestScriptVersion" -ForegroundColor Green 
     }
     if ($CurrentImagemagickversion -and $LatestImagemagickversion) {
-        Write-Entry -Message "Current Imagemagick Version: $CurrentImagemagickversion | Latest Imagemagick Version: $LatestImagemagickversion" -Path $configLogging -Color White -log Info
+        write-host "Current Imagemagick Version: $CurrentImagemagickversion | Latest Imagemagick Version: $LatestImagemagickversion"
     }
 }
 function Test-And-Download {
