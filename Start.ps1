@@ -113,6 +113,19 @@ function GetLatestScriptVersion {
     }
 }
 function CompareScriptVersion {
+    $CurrentImagemagickversion = & $magick -version
+    $CurrentImagemagickversion = [regex]::Match($CurrentImagemagickversion, 'Version: ImageMagick (\d+(\.\d+){1,2}-\d+)')
+    $CurrentImagemagickversion = $CurrentImagemagickversion.Groups[1].Value.replace('-', '.')
+    $Url = "https://pkgs.alpinelinux.org/package/edge/community/x86_64/imagemagick"
+    $response = Invoke-WebRequest -Uri $url
+    $htmlContent = $response.Content
+    $regexPattern = '<th class="header">Version<\/th>\s*<td>\s*<strong>\s*<a[^>]*>([^<]+)<\/a>\s*<\/strong>\s*<\/td>'
+    $Versionmatching = [regex]::Matches($htmlContent, $regexPattern)
+    $LatestImagemagickversion = $LatestImagemagickversion.replace('-', '.')
+
+    if ($Versionmatching.Count -gt 0) {
+        $LatestImagemagickversion = $Versionmatching[0].Groups[1].Value.split('-')[0]
+    }
     # Use Select-String to find the line containing the variable assignment
     $lineContainingVersion = Select-String -Path "./Posterizarr.ps1" -Pattern '^\$CurrentScriptVersion\s*=\s*"([^"]+)"' | Select-Object -ExpandProperty Line
     $LatestScriptVersion = GetLatestScriptVersion
@@ -120,6 +133,9 @@ function CompareScriptVersion {
         # Extract the version from the line
         $version = $lineContainingVersion -replace '^\$CurrentScriptVersion\s*=\s*"([^"]+)".*', '$1'
         write-host "Current Script Version: $version | Latest Script Version: $LatestScriptVersion" -ForegroundColor Green 
+    }
+    if ($CurrentImagemagickversion -and $LatestImagemagickversion) {
+        Write-Entry -Message "Current Imagemagick Version: $CurrentImagemagickversion | Latest Imagemagick Version: $LatestImagemagickversion" -Path $configLogging -Color White -log Info
     }
 }
 function Test-And-Download {
