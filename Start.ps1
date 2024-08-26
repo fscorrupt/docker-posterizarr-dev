@@ -113,6 +113,7 @@ function GetLatestScriptVersion {
     }
 }
 function CompareScriptVersion {
+    $magick = 'magick'
     $CurrentImagemagickversion = & $magick -version
     $CurrentImagemagickversion = [regex]::Match($CurrentImagemagickversion, 'Version: ImageMagick (\d+(\.\d+){1,2}-\d+)')
     $CurrentImagemagickversion = $CurrentImagemagickversion.Groups[1].Value.replace('-', '.')
