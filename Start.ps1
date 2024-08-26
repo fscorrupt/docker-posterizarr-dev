@@ -134,6 +134,7 @@ function CompareScriptVersion {
     $LatestScriptVersion = GetLatestScriptVersion
     if ($lineContainingVersion) {
         # Extract the version from the line
+        write-host ""
         $version = $lineContainingVersion -replace '^\$CurrentScriptVersion\s*=\s*"([^"]+)".*', '$1'
         write-host "Current Script Version: $version | Latest Script Version: $LatestScriptVersion" -ForegroundColor Green 
     }
