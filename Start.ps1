@@ -159,7 +159,9 @@ $PGID = $env:PGID
 # If you want to force ownership on startup:
 try {
     Write-Host "Setting permissions for /config and /assets and Script..."
-    & chown -R $PUID:$PGID /home/posterizarr
+    # Correct the ownership of the home directory
+    $chownCommand = "chown -R $PUID:$PGID /home/posterizarr"
+    Invoke-Expression $chownCommand
     Write-Host "Permissions set successfully."
 } catch {
     Write-Host "Failed to set permissions: $_"
