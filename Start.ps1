@@ -160,7 +160,7 @@ $PGID = $env:PGID
 try {
     Write-Host "Setting permissions for /config and /assets and Script..."
     # Correct the ownership of the home directory
-    $chownCommand = "chown -R ${PUID}:${PGID} /home/posterizarr"
+    $chownCommand = "chown -cR ${PUID}:${PGID} /home/posterizarr"
     Invoke-Expression $chownCommand
     Write-Host "Permissions set successfully."
 } catch {
