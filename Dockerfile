@@ -3,6 +3,7 @@
 
 # Imagemagick 7.1.1.37
 # pwsh 7.4.2
+
 # Base Image
 FROM ghcr.io/fscorrupt/posterizarr-im-pwsh:latest
 
@@ -17,12 +18,13 @@ RUN pwsh -c "Install-Module FanartTvAPI -Force -SkipPublisherCheck -AllowPrerele
 ENV PUID=1000
 ENV PGID=1000
 
-# Create a non-root user and group
-RUN addgroup -g $PGID posterizarr && \
-    adduser -u $PUID -G posterizarr -h /home/posterizarr -s /bin/sh -D posterizarr
-# Create directories and set ownership to the non-root user
-RUN mkdir -p /home/posterizarr/config /home/posterizarr/assets && \
-    chown -R posterizarr:posterizarr /home/posterizarr
+# Create a new group and user with the specified PUID and PGID
+RUN addgroup --gid $PGID posterizarr && \
+    adduser --disabled-password --gecos "" --uid $PUID --gid $PGID posterizarr
+
+# Create necessary directories and set ownership to the non-root user
+RUN mkdir -p /config /assets /home/posterizarr && \
+    chown -R posterizarr:posterizarr /config /assets /home/posterizarr
 
 # Copy the PowerShell script into the container
 COPY Start.ps1 /home/posterizarr/Start.ps1
