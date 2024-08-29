@@ -152,6 +152,10 @@ function Test-And-Download {
         Invoke-WebRequest -Uri $url -OutFile $destination
     }
 }
+# Define paths
+$configPath = "/home/posterizarr/config"
+$assetsPath = "/home/posterizarr/assets"
+
 # Ensure correct permissions
 $PUID = $env:PUID
 $PGID = $env:PGID
@@ -159,8 +163,8 @@ $PGID = $env:PGID
 # If you want to force ownership on startup:
 try {
     Write-Host "Setting permissions for /config and /assets and Script..."
-    # Correct the ownership of the home directory
-    $chownCommand = "chown -cR ${PUID}:${PGID} /home/posterizarr"
+    # Correct the ownership of the config and assets directories
+    $chownCommand = "chown -R ${PUID}:${PGID} $configPath $assetsPath"
     Invoke-Expression $chownCommand
     Write-Host "Permissions set successfully."
 } catch {
