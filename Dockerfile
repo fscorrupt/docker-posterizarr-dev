@@ -20,10 +20,9 @@ ENV PGID=1000
 # Create a non-root user and group
 RUN addgroup -g $PGID posterizarr && \
     adduser -u $PUID -G posterizarr -h /home/posterizarr -s /bin/sh -D posterizarr
-
 # Create directories and set ownership to the non-root user
-RUN mkdir -p /config /assets /home/posterizarr && \
-    chown -R posterizarr:posterizarr /config /assets /home/posterizarr
+RUN mkdir -p /home/posterizarr/config /home/posterizarr/assets && \
+    chown -R posterizarr:posterizarr /home/posterizarr
 
 # Copy the PowerShell script into the container
 COPY Start.ps1 /home/posterizarr/Start.ps1
