@@ -152,7 +152,18 @@ function Test-And-Download {
         Invoke-WebRequest -Uri $url -OutFile $destination
     }
 }
+# Ensure correct permissions
+$PUID = $env:PUID
+$PGID = $env:PGID
 
+# If you want to force ownership on startup:
+try {
+    Write-Host "Setting permissions for /config and /assets and Script..."
+    & chown -R $PUID:$PGID /home/posterizarr
+    Write-Host "Permissions set successfully."
+} catch {
+    Write-Host "Failed to set permissions: $_"
+}
 # Download latest Script file
 $ProgressPreference = 'SilentlyContinue'
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/overlay.png" -destination $PSScriptRoot\config\overlay.png
