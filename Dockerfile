@@ -1,12 +1,14 @@
 # Base Image
-# https://mcr.microsoft.com/powershell/tags/list
-# Imagemagick 7.1.1.37
+# https://mcr.microsoft.com/en-us/product/powershell/tags
+# Imagemagick 7.1.1.38
 # pwsh 7.4.2
 FROM ghcr.io/fscorrupt/posterizarr-im-pwsh:latest
 
 # Labels
 LABEL maintainer=fscorrupt
 LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-posterizarr
+LABEL imagemagick.version=7.1.1.38
+LABEL powershell.version=7.4.2
 
 # Install PowerShell module
 RUN pwsh -c "Install-Module FanartTvAPI -Force -SkipPublisherCheck -AllowPrerelease"
