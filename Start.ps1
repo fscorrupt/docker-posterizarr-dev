@@ -164,18 +164,23 @@ Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/Poster
 Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/config.example.json" -OutFile $PSScriptRoot\config\config.example.json
 $ProgressPreference = 'Continue'
 
+# Change the ownership of Posterizarr.ps1 (assuming chown is available)
+$posterizarrUser = "posterizarr"
+$scriptPath = "$PSScriptRoot\Posterizarr.ps1"
+
+# Use PowerShell to call chown
+Invoke-Expression "chown $($posterizarrUser):$($posterizarrUser) $scriptPath"
+
 # Create Folders
-if (-not (test-path "$PSScriptRoot\config\Logs")) {
-    $null = New-Item -Path "$PSScriptRoot\config\Logs" -ItemType Directory -ErrorAction SilentlyContinue
-}
-if (-not (test-path "$PSScriptRoot\config\temp")) {
-    $null = New-Item -Path "$PSScriptRoot\config\temp" -ItemType Directory -ErrorAction SilentlyContinue
-}
-if (-not (test-path "$PSScriptRoot\config\watcher")) {
-    $null = New-Item -Path "$PSScriptRoot\config\watcher" -ItemType Directory -ErrorAction SilentlyContinue
-}
-if (-not (test-path "$PSScriptRoot\config\test")) {
-    $null = New-Item -Path "$PSScriptRoot\config\test" -ItemType Directory -ErrorAction SilentlyContinue
+$folders = @("Logs", "temp", "watcher", "test")
+foreach ($folder in $folders) {
+    $path = Join-Path "$PSScriptRoot\config" $folder
+    if (-not (Test-Path $path)) {
+        $null = New-Item -Path $path -ItemType Directory -ErrorAction SilentlyContinue
+        
+        # Change ownership of the newly created directory
+        Invoke-Expression "chown $($posterizarrUser):$($posterizarrUser) $path"
+    }
 }
 
 # Checking Config file
