@@ -1,6 +1,6 @@
 function ScriptSchedule {
     # Posterizarr File Watcher for Tautulli Recently Added Files
-    $inputDir = './config/watcher'
+    $inputDir = '/config/watcher'
     $Scriptargs = "-Tautulli"
     $Directory = Get-ChildItem -Name $inputDir
 
@@ -155,13 +155,13 @@ function Test-And-Download {
 
 # Download latest Script file
 $ProgressPreference = 'SilentlyContinue'
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/overlay.png" -destination $PSScriptRoot\config\overlay.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/backgroundoverlay.png" -destination $PSScriptRoot\config\backgroundoverlay.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Rocky.ttf" -destination $PSScriptRoot\config\Rocky.ttf
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Colus-Regular.ttf" -destination $PSScriptRoot\config\Colus-Regular.ttf
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Comfortaa-Medium.ttf" -destination $PSScriptRoot\config\Comfortaa-Medium.ttf
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/overlay.png" -destination /config\overlay.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/backgroundoverlay.png" -destination /config\backgroundoverlay.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Rocky.ttf" -destination /config\Rocky.ttf
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Colus-Regular.ttf" -destination /config\Colus-Regular.ttf
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Comfortaa-Medium.ttf" -destination /config\Comfortaa-Medium.ttf
 Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/Posterizarr.ps1" -OutFile $PSScriptRoot\Posterizarr.ps1
-Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/config.example.json" -OutFile $PSScriptRoot\config\config.example.json
+Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/config.example.json" -OutFile /config\config.example.json
 $ProgressPreference = 'Continue'
 
 # Change the ownership of Posterizarr.ps1 (assuming chown is available)
@@ -174,7 +174,7 @@ Invoke-Expression "chown $($posterizarrUser):$($posterizarrUser) $scriptPath"
 # Create Folders
 $folders = @("Logs", "temp", "watcher", "test")
 foreach ($folder in $folders) {
-    $path = Join-Path "$PSScriptRoot\config" $folder
+    $path = Join-Path "/config" $folder
     if (-not (Test-Path $path)) {
         $null = New-Item -Path $path -ItemType Directory -ErrorAction SilentlyContinue
         
@@ -184,7 +184,7 @@ foreach ($folder in $folders) {
 }
 
 # Checking Config file
-if (-not (test-path "$PSScriptRoot\config\config.json")) {
+if (-not (test-path "/config\config.json")) {
     Write-Host "Creating folder structure for you..."
     Write-Host ""
     Write-Host "Could not find a 'config.json' file" -ForegroundColor Red
@@ -194,12 +194,12 @@ if (-not (test-path "$PSScriptRoot\config\config.json")) {
     do {
         Start-Sleep 600
     } until (
-        test-path "$PSScriptRoot\config\config.json"
+        test-path "/config\config.json"
     )
 }
 
 # Check temp dir if there is a Currently running file present
-$CurrentlyRunning = "$PSScriptRoot\config\temp\Posterizarr.Running"
+$CurrentlyRunning = "/config\temp\Posterizarr.Running"
 
 
 # Clear Running File
