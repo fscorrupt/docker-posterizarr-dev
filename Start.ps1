@@ -153,6 +153,10 @@ function Test-And-Download {
     }
 }
 
+# Check if PUID and PGID environment variables are set
+$puid = $env:PUID
+$pgid = $env:PGID
+
 # Download latest Script file
 $ProgressPreference = 'SilentlyContinue'
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/overlay.png" -destination /config\overlay.png
@@ -170,9 +174,10 @@ foreach ($folder in $folders) {
     $path = Join-Path "/config" $folder
     if (-not (Test-Path $path)) {
         $null = New-Item -Path $path -ItemType Directory -ErrorAction SilentlyContinue
-        
-        # Change ownership of the newly created directory
-        Invoke-Expression "chown $($posterizarrUser):$($posterizarrUser) $path"
+        if ($puid -and $pgid) {
+            # Change ownership of the newly created directory
+            Invoke-Expression "chown posterizarr:posterizarr $path"
+        }
     }
 }
 
@@ -194,7 +199,17 @@ if (-not (test-path "/config\config.json")) {
 # Check temp dir if there is a Currently running file present
 $CurrentlyRunning = "/config\temp\Posterizarr.Running"
 
+# If PUID and PGID are set, adjust ownership of the config and assets directories
+if ($puid -and $pgid) {
+    # Use chown to adjust ownership
+    $command = "chown -R posterizarr:posterizarr /config /assets"
+    Write-Host "Changing ownership of /config and /assets to $username:$groupname..."
+    Invoke-Expression $command
+} else {
+    Write-Host "PUID or PGID not set, skipping ownership change."
+}
 
+# Continue with the rest of your script...
 # Clear Running File
 if (Test-Path $CurrentlyRunning) {
     Remove-Item -LiteralPath $CurrentlyRunning | out-null
