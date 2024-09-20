@@ -12,7 +12,7 @@ ENV PUID=1000
 ENV PGID=1000
 
 # Install PowerShell module
-RUN pwsh -c "Install-Module FanartTvAPI -Force -SkipPublisherCheck -AllowPrerelease"
+RUN pwsh -c "Install-Module FanartTvAPI -Force -SkipPublisherCheck -AllowPrerelease -Scope AllUsers"
 
 # Create group and user based on PUID and PGID
 RUN groupadd -g ${PGID} posterizarr && \
