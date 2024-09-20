@@ -164,13 +164,6 @@ Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/Poster
 Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/config.example.json" -OutFile /config\config.example.json
 $ProgressPreference = 'Continue'
 
-# Change the ownership of Posterizarr.ps1 (assuming chown is available)
-$posterizarrUser = "posterizarr"
-$scriptPath = "$PSScriptRoot\Posterizarr.ps1"
-
-# Use PowerShell to call chown
-Invoke-Expression "chown $($posterizarrUser):$($posterizarrUser) $scriptPath"
-
 # Create Folders
 $folders = @("Logs", "temp", "watcher", "test")
 foreach ($folder in $folders) {
