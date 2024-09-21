@@ -149,13 +149,45 @@ function Test-And-Download {
     )
 
     if (!(Test-Path $destination)) {
-        Invoke-WebRequest -Uri $url -OutFile $destination
-    }
+        try {
+            Invoke-WebRequest -Uri $url -OutFile $destination -ErrorAction Stop
+        } catch {
+            Write-Host "Failed to download $url to $destination. Error: $_"
+        }
+    } 
 }
-
 # Check if PUID and PGID environment variables are set
 $puid = $env:PUID
 $pgid = $env:PGID
+
+if ($puid -and $pgid) {
+    # Use chown and chmod to adjust ownership and permissions
+    $chown = "chown -R posterizarr:posterizarr /config /assets"
+    $chmod = "chmod -R 755 /config /assets"
+    Write-Host "Changing ownership of /config and /assets to posterizarr:posterizarr ..."
+
+    # Run chown command
+    Invoke-Expression $chown
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Chown failed with exit code $LASTEXITCODE, likely due to permission issues."
+        Write-Host "    Please manually change ownership of the directories or ensure proper permissions."
+        Write-Host "    PUID: $puid | PGID: $pgid"
+
+        # Retry loop
+        while ($LASTEXITCODE -ne 0) {
+            Write-Host "Sleeping for 5 minutes before retrying..."
+            Start-Sleep 300  # Sleep for 5 minutes
+            Invoke-Expression $chown
+        }
+    } else {
+        Invoke-Expression $chmod
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "Ownership and permissions changed successfully."
+        }
+    }
+} else {
+    Write-Host "PUID or PGID not set, skipping ownership change."
+}
 
 # Download latest Script file
 $ProgressPreference = 'SilentlyContinue'
@@ -198,40 +230,6 @@ if (-not (test-path "/config\config.json")) {
 
 # Check temp dir if there is a Currently running file present
 $CurrentlyRunning = "/config\temp\Posterizarr.Running"
-
-if ($puid -and $pgid) {
-    # Use chown to adjust ownership
-    $command = "chown -R posterizarr:posterizarr /config /assets"
-    Write-Host "Changing ownership of /config and /assets to posterizarr:posterizarr ..."
-    
-    # Run chown command and check for errors
-    Invoke-Expression $command
-
-    # Check the exit code of chown command
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host ""
-        Write-Host "Chown failed with exit code $LASTEXITCODE, likely due to permission issues."
-        Write-Host "    Please manually change ownership of the directories or ensure proper permissions."
-        Write-Host "    PUID: $puid | PGID: $pgid"
-
-        while ($LASTEXITCODE -ne 0) {
-            $silentcommand = "chown -R posterizarr:posterizarr /config /assets 2>/dev/null"
-            Write-Host "Sleeping for 5 minutes before retrying..."
-            Start-Sleep 360
-            Invoke-Expression $silentcommand
-
-            if ($LASTEXITCODE -ne 0) {
-                Write-Host "    Chown failed again. Please manually change ownership of the directories or ensure proper permissions."
-                Write-Host "    PUID: $puid | PGID: $pgid"
-            }
-        }
-    } else {
-        Write-Host "Ownership change completed successfully."
-    }
-
-} else {
-    Write-Host "PUID or PGID not set, skipping ownership change."
-}
 
 # Continue with the rest of your script...
 # Clear Running File
