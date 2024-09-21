@@ -160,6 +160,16 @@ function Test-And-Download {
 $puid = $env:PUID
 $pgid = $env:PGID
 
+# Check if PUID and PGID are provided
+if ($puid -and $pgid) {
+    # Create group and user with PUID and PGID
+    Write-Host "Creating user and group posterizarr with PUID=$puid and PGID=$pgid..."
+    Invoke-Expression "groupadd -g $pgid posterizarr"
+    Invoke-Expression "useradd -u $puid -g posterizarr -m posterizarr"
+} else {
+    Write-Host "PUID or PGID not set, skipping user creation."
+}
+
 if ($puid -and $pgid) {
     # Use chown and chmod to adjust ownership and permissions
     $chown = "chown -R posterizarr:posterizarr /config /assets"
