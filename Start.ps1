@@ -199,15 +199,38 @@ if (-not (test-path "/config\config.json")) {
 # Check temp dir if there is a Currently running file present
 $CurrentlyRunning = "/config\temp\Posterizarr.Running"
 
-# If PUID and PGID are set, adjust ownership of the config and assets directories
 if ($puid -and $pgid) {
     # Use chown to adjust ownership
     $command = "chown -R posterizarr:posterizarr /config /assets"
     Write-Host "Changing ownership of /config and /assets to posterizarr:posterizarr ..."
+    
+    # Run chown command and check for errors
     Invoke-Expression $command
+
+    # Check the exit code of chown command
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host ""
+        Write-Host "Chown failed with exit code $LASTEXITCODE, likely due to permission issues."
+        Write-Host "Please manually chown the directories or ensure proper permissions."
+        Write-Host "PUID is: $puid | PGID is: $pgid"
+        while ($LASTEXITCODE -ne 0) {
+            $silentcommand = "chown -R posterizarr:posterizarr /config /assets 2>/dev/null"
+            Write-Host "Sleeping for 5 minutes before retrying it again.."
+            Start-Sleep 360
+            Invoke-Expression $silentcommand
+            if ($LASTEXITCODE -ne 0) {
+                Write-Host "    Chown failed, please manually chown the directories or ensure proper permissions."
+                Write-Host "    PUID is: $puid | PGID is: $pgid"
+            }
+        }
+    } else {
+        Write-Host "Ownership change completed successfully."
+    }
+
 } else {
     Write-Host "PUID or PGID not set, skipping ownership change."
 }
+
 
 # Continue with the rest of your script...
 # Clear Running File
