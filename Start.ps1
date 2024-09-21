@@ -203,7 +203,7 @@ $CurrentlyRunning = "/config\temp\Posterizarr.Running"
 if ($puid -and $pgid) {
     # Use chown to adjust ownership
     $command = "chown -R posterizarr:posterizarr /config /assets"
-    Write-Host "Changing ownership of /config and /assets to $username:$groupname..."
+    Write-Host "Changing ownership of /config and /assets to posterizarr:posterizarr ..."
     Invoke-Expression $command
 } else {
     Write-Host "PUID or PGID not set, skipping ownership change."
