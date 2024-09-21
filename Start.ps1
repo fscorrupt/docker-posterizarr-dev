@@ -211,16 +211,18 @@ if ($puid -and $pgid) {
     if ($LASTEXITCODE -ne 0) {
         Write-Host ""
         Write-Host "Chown failed with exit code $LASTEXITCODE, likely due to permission issues."
-        Write-Host "Please manually chown the directories or ensure proper permissions."
-        Write-Host "PUID is: $puid | PGID is: $pgid"
+        Write-Host "    Please manually change ownership of the directories or ensure proper permissions."
+        Write-Host "    PUID: $puid | PGID: $pgid"
+
         while ($LASTEXITCODE -ne 0) {
             $silentcommand = "chown -R posterizarr:posterizarr /config /assets 2>/dev/null"
-            Write-Host "Sleeping for 5 minutes before retrying it again.."
+            Write-Host "Sleeping for 5 minutes before retrying..."
             Start-Sleep 360
             Invoke-Expression $silentcommand
+
             if ($LASTEXITCODE -ne 0) {
-                Write-Host "    Chown failed, please manually chown the directories or ensure proper permissions."
-                Write-Host "    PUID is: $puid | PGID is: $pgid"
+                Write-Host "    Chown failed again. Please manually change ownership of the directories or ensure proper permissions."
+                Write-Host "    PUID: $puid | PGID: $pgid"
             }
         }
     } else {
@@ -230,7 +232,6 @@ if ($puid -and $pgid) {
 } else {
     Write-Host "PUID or PGID not set, skipping ownership change."
 }
-
 
 # Continue with the rest of your script...
 # Clear Running File
