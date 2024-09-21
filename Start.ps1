@@ -164,8 +164,8 @@ $pgid = $env:PGID
 if ($puid -and $pgid) {
     # Create group and user with PUID and PGID
     Write-Host "Creating user and group posterizarr with PUID=$puid and PGID=$pgid..."
-    Invoke-Expression "groupadd -g $pgid posterizarr"
-    Invoke-Expression "useradd -u $puid -g posterizarr -m posterizarr"
+    Invoke-Expression "groupadd -g $pgid posterizarr 2>/dev/null"
+    Invoke-Expression "useradd -u $puid -g posterizarr -m posterizarr 2>/dev/null"
 } else {
     Write-Host "PUID or PGID not set, skipping user creation."
 }
