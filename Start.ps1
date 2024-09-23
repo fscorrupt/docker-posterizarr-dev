@@ -184,9 +184,7 @@ if (Test-Path $CurrentlyRunning) {
     Invoke-Expression "chown posterizarr:posterizarr /config/temp/Posterizarr.Running 2>/dev/null"
     try {
         Remove-Item -LiteralPath $CurrentlyRunning -Force | out-null
-        if (!Test-Path $CurrentlyRunning) {
-            Write-Host "Cleared .running file..." -ForegroundColor Green
-        }
+        Write-Host "Cleared .running file..." -ForegroundColor Green
     }
     catch {
         Write-Host "Failed to delete '$CurrentlyRunning' file. Error: $_"
