@@ -204,9 +204,16 @@ $ProgressPreference = 'Continue'
 
 if ($puid -and $pgid) {
     # Use chown and chmod to adjust ownership and permissions
-    $chown = "chown -R posterizarr:posterizarr /config /assets"
-    $chmod = "chmod -R 755 /config /assets"
-    Write-Host "Changing ownership of /config and /assets to posterizarr:posterizarr ..."
+    if (test-path /assets){
+        $chown = "chown -R posterizarr:posterizarr /config /assets"
+        $chmod = "chmod -R 755 /config /assets"
+        Write-Host "Changing ownership of /config and /assets to posterizarr:posterizarr ..."
+    }
+    Else {
+        $chown = "chown -R posterizarr:posterizarr /config"
+        $chmod = "chmod -R 755 /config"
+        Write-Host "Changing ownership of /config to posterizarr:posterizarr ..."
+    }
 
     # Run chown command
     Invoke-Expression $chown
