@@ -50,7 +50,7 @@ function ScriptSchedule {
                 Write-Warning "There is currently running another Process of Posterizarr, skipping this run."
             }
             Else {
-                pwsh Posterizarr.ps1
+                sudo -u posterizarr pwsh Posterizarr.ps1
             }
         }
         If ($Directory) 
@@ -79,8 +79,8 @@ function ScriptSchedule {
                 write-host "Calling Posterizarr with this args: $Scriptargs"
 
                 # Call Posterizarr with Args
-                pwsh -Command "./Posterizarr.ps1 $Scriptargs"
-                
+                sudo -u posterizarr pwsh -Command "./Posterizarr.ps1 $Scriptargs"
+
                 # Reset scriptargs
                 $Scriptargs = "-Tautulli"
                 write-host ""
@@ -162,17 +162,33 @@ $pgid = $env:PGID
 
 # Check if PUID and PGID are provided
 if ($puid -and $pgid) {
-    # Create group and user with PUID and PGID
-    Write-Host "Creating user and group posterizarr with PUID=$puid and PGID=$pgid..."
-    Invoke-Expression "groupadd -g $pgid posterizarr 2>/dev/null"
-    Invoke-Expression "useradd -u $puid -g posterizarr -m posterizarr 2>/dev/null"
+    Write-Host "Adjusting user and group to PUID: $puid and PGID: $pgid..."
+
+    # Modify group ID
+    $modifyGroupCmd = "groupmod -o -g $pgid posterizarr || groupadd -g $pgid posterizarr 2>/dev/null"
+    $modifyUserCmd = "usermod -o -u $puid -g $pgid posterizarr || useradd -u $puid -g $pgid -M posterizarr 2>/dev/null"
+
+    # Apply the commands as root
+    Invoke-Expression $modifyGroupCmd
+    Invoke-Expression $modifyUserCmd
 } else {
-    Write-Host "PUID or PGID not set, skipping user creation."
+    Write-Host "PUID or PGID not provided, using root user by default."
 }
+
+# Download latest Script file
+$ProgressPreference = 'SilentlyContinue'
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/overlay.png" -destination /config\overlay.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/backgroundoverlay.png" -destination /config\backgroundoverlay.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Rocky.ttf" -destination /config\Rocky.ttf
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Colus-Regular.ttf" -destination /config\Colus-Regular.ttf
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Comfortaa-Medium.ttf" -destination /config\Comfortaa-Medium.ttf
+Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/Posterizarr.ps1" -OutFile $PSScriptRoot\Posterizarr.ps1
+Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/config.example.json" -OutFile /config\config.example.json
+$ProgressPreference = 'Continue'
 
 if ($puid -and $pgid) {
     # Use chown and chmod to adjust ownership and permissions
-    $chown = "chown -R posterizarr:posterizarr /config /assets"
+    $chown = "chown -R posterizarr:posterizarr /config /assets /home/posterizarr"
     $chmod = "chmod -R 755 /config /assets"
     Write-Host "Changing ownership of /config and /assets to posterizarr:posterizarr ..."
 
@@ -198,17 +214,6 @@ if ($puid -and $pgid) {
 } else {
     Write-Host "PUID or PGID not set, skipping ownership change."
 }
-
-# Download latest Script file
-$ProgressPreference = 'SilentlyContinue'
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/overlay.png" -destination /config\overlay.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/backgroundoverlay.png" -destination /config\backgroundoverlay.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Rocky.ttf" -destination /config\Rocky.ttf
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Colus-Regular.ttf" -destination /config\Colus-Regular.ttf
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Comfortaa-Medium.ttf" -destination /config\Comfortaa-Medium.ttf
-Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/Posterizarr.ps1" -OutFile $PSScriptRoot\Posterizarr.ps1
-Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/config.example.json" -OutFile /config\config.example.json
-$ProgressPreference = 'Continue'
 
 # Create Folders
 $folders = @("Logs", "temp", "watcher", "test")
@@ -247,6 +252,7 @@ if (Test-Path $CurrentlyRunning) {
     Remove-Item -LiteralPath $CurrentlyRunning | out-null
     write-host "Cleared .running file..." -ForegroundColor Green
 }
+
 # Show integraded Scripts
 $StartTime = Get-Date
 write-host "Container Started..." -ForegroundColor Green
