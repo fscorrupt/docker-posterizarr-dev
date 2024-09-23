@@ -7,6 +7,11 @@ LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-poster
 LABEL imagemagick.version=7.1.1.38
 LABEL powershell.version=7.4.2
 
+# Create the posterizarr user and group without specifying IDs
+RUN groupadd posterizarr && \
+    useradd -g posterizarr -m posterizarr && \
+    usermod -aG sudo posterizarr
+
 # Install PowerShell module
 RUN pwsh -c "Install-Module FanartTvAPI -Force -SkipPublisherCheck -AllowPrerelease -Scope AllUsers"
 
@@ -21,3 +26,6 @@ RUN chmod +x /home/posterizarr/Start.ps1
 
 # Set the entrypoint
 ENTRYPOINT ["/usr/bin/tini", "-s", "pwsh", "Start.ps1", "--"]
+
+# Switch to the posterizarr user
+USER posterizarr
