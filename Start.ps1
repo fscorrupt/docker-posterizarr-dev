@@ -182,7 +182,8 @@ $CurrentlyRunning = "/config\temp\Posterizarr.Running"
 # Clear Running File
 if (Test-Path $CurrentlyRunning) {
     Invoke-Expression "chown posterizarr:posterizarr /config/temp/Posterizarr.Running 2>/dev/null"
-    Remove-Item -LiteralPath $CurrentlyRunning | out-null
+    sudo -u posterizarr rm /config/temp/Posterizarr.Running
+    #Remove-Item -LiteralPath $CurrentlyRunning | out-null
     write-host "Cleared .running file..." -ForegroundColor Green
 }
 
