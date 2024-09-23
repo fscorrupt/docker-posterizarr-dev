@@ -162,7 +162,7 @@ $pgid = $env:PGID
 
 # Check if PUID and PGID are provided
 if ($puid -and $pgid) {
-    Write-Host "Adjusting user and group to PUID: $puid and PGID: $pgid..."
+    Write-Host "Adjusting user and group to PUID: $puid and PGID: $pgid"
 
     # Modify group ID
     $GroupCmd = "groupadd -g $pgid posterizarr 2>/dev/null"
@@ -207,12 +207,12 @@ if ($puid -and $pgid) {
     if (test-path /assets){
         $chown = "chown -R posterizarr:posterizarr /config /assets"
         $chmod = "chmod -R 755 /config /assets"
-        Write-Host "Changing ownership of /config and /assets to posterizarr:posterizarr ..."
+        Write-Host "Changing ownership of /config and /assets to posterizarr:posterizarr"
     }
     Else {
         $chown = "chown -R posterizarr:posterizarr /config"
         $chmod = "chmod -R 755 /config"
-        Write-Host "Changing ownership of /config to posterizarr:posterizarr ..."
+        Write-Host "Changing ownership of /config to posterizarr:posterizarr"
     }
 
     # Run chown command
