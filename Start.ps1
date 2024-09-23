@@ -207,12 +207,12 @@ if ($puid -and $pgid) {
     if (test-path /assets){
         $chown = "chown -R posterizarr:posterizarr /config /assets"
         $chmod = "chmod -R 755 /config /assets"
-        Write-Host "Changing ownership of /config and /assets to posterizarr:posterizarr"
+        Write-Host "Changing ownership of /config and /assets to $($puid):$($pgid)"
     }
     Else {
         $chown = "chown -R posterizarr:posterizarr /config"
         $chmod = "chmod -R 755 /config"
-        Write-Host "Changing ownership of /config to posterizarr:posterizarr"
+        Write-Host "Changing ownership of /config to $($puid):$($pgid)"
     }
 
     # Run chown command
