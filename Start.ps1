@@ -165,12 +165,12 @@ if ($puid -and $pgid) {
     Write-Host "Adjusting user and group to PUID: $puid and PGID: $pgid..."
 
     # Modify group ID
-    $modifyGroupCmd = "groupmod -o -g $pgid posterizarr || groupadd -g $pgid posterizarr 2>/dev/null"
-    $modifyUserCmd = "usermod -o -u $puid -g $pgid posterizarr || useradd -u $puid -g $pgid -M posterizarr 2>/dev/null"
+    $GroupCmd = "groupadd -g $pgid posterizarr 2>/dev/null"
+    $UserCmd = " useradd -u $puid -g $pgid -M posterizarr 2>/dev/null"
 
     # Apply the commands as root
-    Invoke-Expression $modifyGroupCmd
-    Invoke-Expression $modifyUserCmd
+    Invoke-Expression $GroupCmd
+    Invoke-Expression $UserCmd
 } else {
     Write-Host "PUID or PGID not provided, using root user by default."
 }
