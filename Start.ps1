@@ -181,6 +181,7 @@ $CurrentlyRunning = "/config\temp\Posterizarr.Running"
 # Continue with the rest of your script...
 # Clear Running File
 if (Test-Path $CurrentlyRunning) {
+    Invoke-Expression "chown posterizarr:posterizarr /config/temp/Posterizarr.Running 2>/dev/null"
     Remove-Item -LiteralPath $CurrentlyRunning | out-null
     write-host "Cleared .running file..." -ForegroundColor Green
 }
