@@ -175,6 +175,16 @@ if ($puid -and $pgid) {
     Write-Host "PUID or PGID not provided, using root user by default."
 }
 
+# Check temp dir if there is a Currently running file present
+$CurrentlyRunning = "/config\temp\Posterizarr.Running"
+
+# Continue with the rest of your script...
+# Clear Running File
+if (Test-Path $CurrentlyRunning) {
+    Remove-Item -LiteralPath $CurrentlyRunning | out-null
+    write-host "Cleared .running file..." -ForegroundColor Green
+}
+
 # Download latest Script file
 $ProgressPreference = 'SilentlyContinue'
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/overlay.png" -destination /config\overlay.png
@@ -241,16 +251,6 @@ if (-not (test-path "/config\config.json")) {
     } until (
         test-path "/config\config.json"
     )
-}
-
-# Check temp dir if there is a Currently running file present
-$CurrentlyRunning = "/config\temp\Posterizarr.Running"
-
-# Continue with the rest of your script...
-# Clear Running File
-if (Test-Path $CurrentlyRunning) {
-    Remove-Item -LiteralPath $CurrentlyRunning | out-null
-    write-host "Cleared .running file..." -ForegroundColor Green
 }
 
 # Show integraded Scripts
