@@ -50,7 +50,7 @@ function ScriptSchedule {
                 Write-Warning "There is currently running another Process of Posterizarr, skipping this run."
             }
             Else {
-                sudo -u posterizarr pwsh Posterizarr.ps1
+                pwsh Posterizarr.ps1
             }
         }
         If ($Directory) 
@@ -79,7 +79,7 @@ function ScriptSchedule {
                 write-host "Calling Posterizarr with this args: $Scriptargs"
 
                 # Call Posterizarr with Args
-                sudo -u posterizarr pwsh -Command "./Posterizarr.ps1 $Scriptargs"
+                pwsh -Command "./Posterizarr.ps1 $Scriptargs"
 
                 # Reset scriptargs
                 $Scriptargs = "-Tautulli"
@@ -182,9 +182,15 @@ $CurrentlyRunning = "/config\temp\Posterizarr.Running"
 # Clear Running File
 if (Test-Path $CurrentlyRunning) {
     Invoke-Expression "chown posterizarr:posterizarr /config/temp/Posterizarr.Running 2>/dev/null"
-    sudo -u posterizarr rm /config/temp/Posterizarr.Running
-    #Remove-Item -LiteralPath $CurrentlyRunning | out-null
-    write-host "Cleared .running file..." -ForegroundColor Green
+    try {
+        Remove-Item -LiteralPath $CurrentlyRunning -Force | out-null
+        if (!Test-Path $CurrentlyRunning) {
+            Write-Host "Cleared .running file..." -ForegroundColor Green
+        }
+    }
+    catch {
+        Write-Host "Failed to delete '$CurrentlyRunning' file. Error: $_"
+    }
 }
 
 # Download latest Script file
