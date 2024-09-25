@@ -29,7 +29,7 @@ function ScriptSchedule {
                 Offset = $offset.TotalSeconds
             }
         } | Sort-Object -Property Offset | Select-Object -First 1
-    
+
         # Use the nearest scheduled run time
         $NextScriptRunTime = $NextScriptRun.RunTime
         $NextScriptRunOffset = $NextScriptRun.Offset
@@ -44,28 +44,28 @@ function ScriptSchedule {
         }
         if ($NextScriptRunOffset -le '60') {
             $alreadydisplayed = $null
-            Start-Sleep $NextScriptRunOffset 
+            Start-Sleep $NextScriptRunOffset
             # Calling the Posterizarr Script
             if ((Get-Process | Where-Object commandline -like 'pwsh')) {
                 Write-Warning "There is currently running another Process of Posterizarr, skipping this run."
             }
             Else {
-                pwsh Posterizarr.ps1
+                pwsh /config/Posterizarr.ps1
             }
         }
-        If ($Directory) 
+        If ($Directory)
         {
             $TautulliTriggers = Get-ChildItem $inputDir -Recurse | Where-Object -FilterScript {
                 $_.Extension -match 'posterizarr'
             }
-    
+
             foreach($item in $TautulliTriggers)
             {
                 write-host "Found .posterizarr file..."
-                
+
                 # Get trigger Values
                 $triggerargs = Get-Content $item
-                
+
                 # Replace args
                 foreach ($line in $triggerargs) {
                     if ($line -match '^\[(.+)\]: (.+)$') {
@@ -74,12 +74,12 @@ function ScriptSchedule {
                         $Scriptargs += " -$arg_name $arg_value"
                     }
                 }
-            
+
                 write-host "Building trigger args..."
                 write-host "Calling Posterizarr with this args: $Scriptargs"
 
                 # Call Posterizarr with Args
-                pwsh -Command "./Posterizarr.ps1 $Scriptargs"
+                pwsh -Command "/config/Posterizarr.ps1 $Scriptargs"
 
                 # Reset scriptargs
                 $Scriptargs = "-Tautulli"
@@ -93,7 +93,7 @@ function ScriptSchedule {
                 Write-Host "Next Script Run is at: $NextScriptRunTime"
                 Remove-Item "$inputDir/$($item.Name)" -Force -Confirm:$false
             }
-    
+
             $Directory = Get-ChildItem -Name $inputDir
         }
         if (!$Directory)
@@ -108,7 +108,7 @@ function GetLatestScriptVersion {
         return Invoke-RestMethod -Uri "https://github.com/fscorrupt/Posterizarr/raw/main/Release.txt" -Method Get -ErrorAction Stop
     }
     catch {
-        Write-Entry -Subtext "Could not query latest script version, Error: $($_.Exception.Message)" -Path $global:ScriptRoot\Logs\Scriptlog.log -Color Red -log Error
+        Write-Host "Could not query latest script version, Error: $($_.Exception.Message)"
         return $null
     }
 }
@@ -118,7 +118,7 @@ function CompareScriptVersion {
     $CurrentImagemagickversion = & $magick -version
     $CurrentImagemagickversion = [regex]::Match($CurrentImagemagickversion, 'Version: ImageMagick (\d+(\.\d+){1,2}-\d+)')
     $CurrentImagemagickversion = $CurrentImagemagickversion.Groups[1].Value.replace('-', '.')
-    
+
     # Latest Imagemagick Version
     $Url = "https://pkgs.alpinelinux.org/package/edge/community/x86_64/imagemagick"
     $response = Invoke-WebRequest -Uri $url
@@ -130,13 +130,13 @@ function CompareScriptVersion {
         $LatestImagemagickversion = $Versionmatching[0].Groups[1].Value.split('-')[0]
     }
     # Use Select-String to find the line containing the variable assignment
-    $lineContainingVersion = Select-String -Path "./Posterizarr.ps1" -Pattern '^\$CurrentScriptVersion\s*=\s*"([^"]+)"' | Select-Object -ExpandProperty Line
+    $lineContainingVersion = Select-String -Path "/config/Posterizarr.ps1" -Pattern '^\$CurrentScriptVersion\s*=\s*"([^"]+)"' | Select-Object -ExpandProperty Line
     $LatestScriptVersion = GetLatestScriptVersion
     if ($lineContainingVersion) {
         # Extract the version from the line
         write-host ""
         $version = $lineContainingVersion -replace '^\$CurrentScriptVersion\s*=\s*"([^"]+)".*', '$1'
-        write-host "Current Script Version: $version | Latest Script Version: $LatestScriptVersion" -ForegroundColor Green 
+        write-host "Current Script Version: $version | Latest Script Version: $LatestScriptVersion" -ForegroundColor Green
     }
     if ($CurrentImagemagickversion -and $LatestImagemagickversion) {
         write-host "Current Imagemagick Version: $CurrentImagemagickversion | Latest Imagemagick Version: $LatestImagemagickversion"
@@ -149,121 +149,70 @@ function Test-And-Download {
     )
 
     if (!(Test-Path $destination)) {
-        try {
-            Invoke-WebRequest -Uri $url -OutFile $destination -ErrorAction Stop
-        } catch {
-            Write-Host "Failed to download $url to $destination. Error: $_"
-        }
-    } 
-}
-# Check if PUID and PGID environment variables are set
-$puid = $env:PUID
-$pgid = $env:PGID
-
-# Check if PUID and PGID are provided
-if ($puid -and $pgid) {
-    Write-Host "Adjusting user and group to PUID: $puid and PGID: $pgid"
-
-    # Modify group ID
-    $GroupCmd = "groupadd -g $pgid posterizarr 2>/dev/null"
-    $UserCmd = " useradd -u $puid -g $pgid -M posterizarr 2>/dev/null"
-
-    # Apply the commands as root
-    Invoke-Expression $GroupCmd
-    Invoke-Expression $UserCmd
-} else {
-    Write-Host "PUID or PGID not provided, using root user by default."
-}
-
-# Check temp dir if there is a Currently running file present
-$CurrentlyRunning = "/config\temp\Posterizarr.Running"
-
-# Continue with the rest of your script...
-# Clear Running File
-if (Test-Path $CurrentlyRunning) {
-    Invoke-Expression "chown posterizarr:posterizarr /config/temp/Posterizarr.Running 2>/dev/null"
-    try {
-        Remove-Item -LiteralPath $CurrentlyRunning -Force | out-null
-        Write-Host "Cleared .running file..." -ForegroundColor Green
-    }
-    catch {
-        Write-Host "Failed to delete '$CurrentlyRunning' file. Error: $_"
+        Invoke-WebRequest -Uri $url -OutFile $destination
     }
 }
 
 # Download latest Script file
 $ProgressPreference = 'SilentlyContinue'
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/overlay.png" -destination /config\overlay.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/backgroundoverlay.png" -destination /config\backgroundoverlay.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Rocky.ttf" -destination /config\Rocky.ttf
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Colus-Regular.ttf" -destination /config\Colus-Regular.ttf
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Comfortaa-Medium.ttf" -destination /config\Comfortaa-Medium.ttf
-Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/Posterizarr.ps1" -OutFile $PSScriptRoot\Posterizarr.ps1
-Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/config.example.json" -OutFile /config\config.example.json
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/overlay.png" -destination /config/overlay.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/backgroundoverlay.png" -destination /config/backgroundoverlay.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Rocky.ttf" -destination /config/Rocky.ttf
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Colus-Regular.ttf" -destination /config/Colus-Regular.ttf
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Comfortaa-Medium.ttf" -destination /config/Comfortaa-Medium.ttf
+Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/Posterizarr.ps1" -OutFile /config/Posterizarr.ps1
+Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/config.example.json" -OutFile /config/config.example.json
 $ProgressPreference = 'Continue'
 
-if ($puid -and $pgid) {
-    # Use chown and chmod to adjust ownership and permissions
-    if (test-path /assets){
-        $chown = "chown -R posterizarr:posterizarr /config /assets"
-        $chmod = "chmod -R 755 /config /assets"
-        Write-Host "Changing ownership of /config and /assets to $($puid):$($pgid)"
-    }
-    Else {
-        $chown = "chown -R posterizarr:posterizarr /config"
-        $chmod = "chmod -R 755 /config"
-        Write-Host "Changing ownership of /config to $($puid):$($pgid)"
-    }
-
-    # Run chown command
-    Invoke-Expression $chown
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "Chown failed with exit code $LASTEXITCODE, likely due to permission issues."
-        Write-Host "    Please manually change ownership of the directories or ensure proper permissions."
-        Write-Host "    PUID: $puid | PGID: $pgid"
-
-        # Retry loop
-        while ($LASTEXITCODE -ne 0) {
-            Write-Host "Sleeping for 5 minutes before retrying..."
-            Start-Sleep 300  # Sleep for 5 minutes
-            Invoke-Expression $chown
-        }
-    } else {
-        Invoke-Expression $chmod
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "Ownership and permissions changed successfully."
-        }
-    }
-} else {
-    Write-Host "PUID or PGID not set, skipping ownership change."
-}
-
 # Create Folders
-$folders = @("Logs", "temp", "watcher", "test")
-foreach ($folder in $folders) {
-    $path = Join-Path "/config" $folder
-    if (-not (Test-Path $path)) {
-        $null = New-Item -Path $path -ItemType Directory -ErrorAction SilentlyContinue
-        if ($puid -and $pgid) {
-            # Change ownership of the newly created directory
-            Invoke-Expression "chown posterizarr:posterizarr $path"
-        }
-    }
+if (-not (test-path "/config/Logs")) {
+    $null = New-Item -Path "/config/Logs" -ItemType Directory -ErrorAction SilentlyContinue
+}
+if (-not (test-path "/config/temp")) {
+    $null = New-Item -Path "/config/temp" -ItemType Directory -ErrorAction SilentlyContinue
+}
+if (-not (test-path "/config/watcher")) {
+    $null = New-Item -Path "/config/watcher" -ItemType Directory -ErrorAction SilentlyContinue
+}
+if (-not (test-path "/config/test")) {
+    $null = New-Item -Path "/config/test" -ItemType Directory -ErrorAction SilentlyContinue
 }
 
 # Checking Config file
-if (-not (test-path "/config\config.json")) {
+if (-not (test-path "/config/config.json")) {
     Write-Host "Creating folder structure for you..."
     Write-Host ""
     Write-Host "Could not find a 'config.json' file" -ForegroundColor Red
-    Write-Host "Please edit the config.example.json according to GH repo and save it as 'config.json'" -ForegroundColor Yellow 
+    Write-Host "Please edit the config.example.json according to GH repo and save it as 'config.json'" -ForegroundColor Yellow
     Write-Host "    After that restart the container..."
     Write-Host "Exiting now"
     do {
         Start-Sleep 600
     } until (
-        test-path "/config\config.json"
+        test-path "/config/config.json"
     )
+}
+
+# Check if the FanartTvAPI module is installed
+$moduleName = 'FanartTvAPI'
+$module = Get-Module -ListAvailable -Name $moduleName
+
+if (-not $module) {
+    # Try to install the module
+    try {
+        Install-Module -Name $moduleName -Force -SkipPublisherCheck -AllowPrerelease -Scope AllUsers
+    } catch {
+        Write-Host "Failed to install $moduleName module. Error: $_"
+    }
+}
+
+# Check temp dir if there is a Currently running file present
+$CurrentlyRunning = "/config/temp/Posterizarr.Running"
+
+# Clear Running File
+if (Test-Path $CurrentlyRunning) {
+    Remove-Item -LiteralPath $CurrentlyRunning | out-null
+    write-host "Cleared .running file..." -ForegroundColor Green
 }
 
 # Show integraded Scripts

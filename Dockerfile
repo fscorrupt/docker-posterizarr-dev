@@ -1,31 +1,19 @@
 # Base Image
-FROM ghcr.io/fscorrupt/posterizarr-im-pwsh:latest
+FROM ghcr.io/fscorrupt/posterizarr-im-pwsh-lsio:latest
 
 # Labels
 LABEL maintainer=fscorrupt
 LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-posterizarr
 LABEL imagemagick.version=7.1.1.38
-LABEL powershell.version=7.4.2
+LABEL powershell.version=7.4.5
 
-# Create the posterizarr user and group without specifying IDs
-RUN groupadd posterizarr && \
-    useradd -g posterizarr -m posterizarr && \
-    usermod -aG sudo posterizarr
+# Set the distribution channel for PowerShell
+ENV POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-Ubuntu-22.04
 
 # Install PowerShell module
 RUN pwsh -c "Install-Module FanartTvAPI -Force -SkipPublisherCheck -AllowPrerelease -Scope AllUsers"
 
-# Set working directory
-WORKDIR /home/posterizarr
+# Copy the s6-overlay run script and other necessary files
+COPY ./root/ /
 
-# Copy the PowerShell script into the container
-COPY Start.ps1 /home/posterizarr/Start.ps1
-
-# Set permissions on the script
-RUN chmod +x /home/posterizarr/Start.ps1
-
-# Set the entrypoint
-ENTRYPOINT ["/usr/bin/tini", "-s", "pwsh", "Start.ps1", "--"]
-
-# Switch to the posterizarr user
-USER posterizarr
+VOLUME /config

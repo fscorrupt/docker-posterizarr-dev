@@ -1,0 +1,25 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+if [[ -f /app/donate.txt ]]; then cat /app/donate.txt ; fi
+
+# Change ownership of /config
+echo "chown /config"
+lsiown -R abc:abc /config
+
+# Check if /assets directory exists
+if [ -d /assets ]; then
+    # Change ownership of /assets if it exists
+    echo "chown /assets"
+    lsiown -R abc:abc /assets
+else
+    echo "create /config/assets"
+    mkdir -p /config/assets
+    # Change ownership of /config/assets
+    echo "chown /config/assets"
+    lsiown -R abc:abc /config/assets
+fi
+
+# Start the PowerShell script with tini
+echo "start posterizarr main script"
+s6-setuidgid abc /usr/bin/tini -s -- pwsh /app/Start.ps1 --
