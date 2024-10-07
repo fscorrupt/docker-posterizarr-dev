@@ -10,6 +10,9 @@ LABEL powershell.version=7.4.5
 # Set the distribution channel for PowerShell
 ENV POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-Ubuntu-22.04
 
+# Install dumb-init - for arm support
+RUN apt-get update && apt-get install -y dumb-init
+
 # Install PowerShell module
 RUN pwsh -c "Install-Module FanartTvAPI -Force -SkipPublisherCheck -AllowPrerelease -Scope AllUsers"
 
