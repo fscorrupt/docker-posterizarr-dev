@@ -1,7 +1,9 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
-if [[ -f /app/donate.txt ]]; then cat /app/donate.txt ; fi
+if [[ -f /app/donate.txt ]]; then 
+    cat /app/donate.txt 
+fi
 
 # Change ownership of /config
 echo "chown /config"
@@ -20,6 +22,16 @@ else
     lsiown -R abc:abc /config/assets
 fi
 
-# Start the PowerShell script with tini
-echo "start posterizarr main script"
-s6-setuidgid abc /usr/bin/tini -s -- pwsh /app/Start.ps1 --
+# Detect architecture
+ARCH=$(uname -m)
+
+echo "Detected architecture: $ARCH"
+
+# Conditional logic for tini replacement on ARM architecture
+if [[ "$ARCH" == "arm"* || "$ARCH" == "aarch64" ]]; then
+    echo "ARM architecture detected, starting posterizarr main script with dumb-init"
+    s6-setuidgid abc /usr/bin/dumb-init -- pwsh /app/Start.ps1 --
+else
+    echo "Non-ARM architecture detected, starting posterizarr main script with tini"
+    s6-setuidgid abc /usr/bin/tini -s -- pwsh /app/Start.ps1 --
+fi
