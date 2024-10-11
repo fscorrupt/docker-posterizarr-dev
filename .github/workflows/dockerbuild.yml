@@ -1,8 +1,6 @@
 name: Build Multi Stage Docker Image
 on:
   push:
-  schedule:
-    - cron: '0 5 * * *'
   workflow_dispatch:
 jobs:
   GHRC:
