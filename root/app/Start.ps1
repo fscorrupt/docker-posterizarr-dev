@@ -161,7 +161,10 @@ Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Rocky.
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Colus-Regular.ttf" -destination /config/Colus-Regular.ttf
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Comfortaa-Medium.ttf" -destination /config/Comfortaa-Medium.ttf
 Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/Posterizarr.ps1" -OutFile /config/Posterizarr.ps1
-Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/config.example.json" -OutFile /config/config.example.json
+# Only download config.example,json if config.json is missing
+if (-not (test-path "/config/config.json")) {
+    Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/config.example.json" -OutFile /config/config.example.json
+}
 $ProgressPreference = 'Continue'
 
 # Create Folders
