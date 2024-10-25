@@ -30,4 +30,4 @@ s6-setuidgid abc /usr/bin/tini -s -- pwsh /app/Start.ps1 &
 
 # Start the Flask application
 echo "Starting Flask backend"
-s6-setuidgid abc /usr/bin/tini -s -- python3 /app/app.py &
+s6-setuidgid abc python3 /app/app.py &
