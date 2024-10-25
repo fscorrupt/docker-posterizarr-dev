@@ -48,7 +48,4 @@ RUN pwsh -c "Install-Module FanartTvAPI -Force -SkipPublisherCheck -AllowPrerele
 # Copy the s6-overlay run script and other necessary files
 COPY ./root/ /
 
-# Expose Flask port
-EXPOSE 1337
-
 VOLUME /config
