@@ -40,7 +40,7 @@ RUN t=$(mktemp) && \
     rm "$t"
 
 # Install Python library
-RUN pip3 install apprise flask
+RUN pip3 install apprise
 
 # Install PowerShell module
 RUN pwsh -c "Install-Module FanartTvAPI -Force -SkipPublisherCheck -AllowPrerelease -Scope AllUsers"
