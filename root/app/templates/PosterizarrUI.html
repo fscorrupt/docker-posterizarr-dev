@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PosterizarrUI</title>
+
+    <!-- Google Font: Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ENjdO4Dr2bkBIFxQpeoYz1M3PRqVVfw5p4Iy0KI1bEU6i5xcpSjg1/jzDsiwk5L" crossorigin="anonymous">
+
+    <style>
+        /* Apply modern font */
+        body {
+            background-color: #f5f6fa;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* Centered container with padding */
+        .form-container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Fancy headers for sections */
+        .form-section {
+            background-color: #eef1f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        h1, h2 {
+            font-weight: 700;
+            color: #4a90e2;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #4a90e2;
+        }
+
+        /* Input styling with focus effects */
+        .form-control:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+        }
+
+        .btn-primary {
+            background-color: #4a90e2;
+            border-color: #4a90e2;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #357ABD;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Hidden field */
+        #seasonNameField {
+            display: none;
+        }
+
+        /* Header image styling */
+        .header-image {
+            width: 25px; /* Adjust the width as needed */
+            height: auto; /* Maintain aspect ratio */
+            vertical-align: middle; /* Align with text */
+            margin-right: 10px; /* Space between image and text */
+        }
+    </style>
+
+    <script>
+        function toggleSeasonField() {
+            var checkBox = document.getElementById("createSeasonPoster");
+            var seasonField = document.getElementById("seasonNameField");
+            seasonField.style.display = checkBox.checked ? "block" : "none";
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Gather the form data
+            const linkPath = document.getElementById("linkPath").value;
+            const movieShowName = document.getElementById("movieShowName").value;
+            const seasonName = document.getElementById("seasonName").value;
+            const rootFolder = document.getElementById("rootFolder").value;
+            const libraryName = document.getElementById("libraryName").value;
+            const createSeasonPoster = document.getElementById("createSeasonPoster").checked;
+
+            // Prepare the command to run the PowerShell script
+            const command = `powershell.exe -File your_script.ps1 -linkPath "${linkPath}" -movieShowName "${movieShowName}" ${createSeasonPoster ? `-seasonName "${seasonName}"` : ''} -rootFolder "${rootFolder}" -libraryName "${libraryName}"`;
+
+            console.log(command); // For debugging; you can remove this later
+
+            // Send command to your script or backend as needed
+            // Example: You could use an AJAX call or similar to send the data to your backend
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="form-container">
+            <h1 class="text-center mb-4">
+                <img src="https://raw.githubusercontent.com/fscorrupt/Posterizarr/main/images/webhook.png" class="header-image" alt="Posterizarr Logo">
+                Manual Asset Creation
+            </h1>
+
+            <form action="/submit" method="POST">
+                <!-- Movie/Show Information Section -->
+                <div class="form-section">
+                    <h2>🎥 Movie/Show Information</h2>
+
+                    <!-- Link/Path -->
+                    <div class="mb-3">
+                        <label for="linkPath" class="form-label">📁 Link/Path:</label>
+                        <input type="text" class="form-control" id="linkPath" name="linkPath" placeholder="Enter link or path" required>
+                    </div>
+
+                    <!-- Name of Movie/Show -->
+                    <div class="mb-3">
+                        <label for="movieShowName" class="form-label">🎬 Name of Movie/Show:</label>
+                        <input type="text" class="form-control" id="movieShowName" name="movieShowName" placeholder="Enter movie or show name" required>
+                    </div>
+
+                    <!-- Create Season Poster Checkbox -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="createSeasonPoster" name="createSeasonPoster" onclick="toggleSeasonField()">
+                        <label class="form-check-label" for="createSeasonPoster">
+                            🖼️ Create Season Poster
+                        </label>
+                    </div>
+
+                    <!-- Season Name Field (Hidden by default) -->
+                    <div class="mb-3" id="seasonNameField" style="display: none;">
+                        <label for="seasonName" class="form-label">📅 Season Name:</label>
+                        <input type="text" class="form-control" id="seasonName" name="seasonName" placeholder="Enter season name">
+                    </div>
+                </div>
+
+                <!-- Media Settings Section -->
+                <div class="form-section">
+                    <h2>📂 Media Settings</h2>
+
+                    <!-- Root Folder -->
+                    <div class="mb-3">
+                        <label for="rootFolder" class="form-label">📂 Root Folder Name:</label>
+                        <input type="text" class="form-control" id="rootFolder" name="rootFolder" placeholder="Enter root folder name" required>
+                    </div>
+
+                    <!-- Library Name -->
+                    <div class="mb-3">
+                        <label for="libraryName" class="form-label">🏛️ Library Name:</label>
+                        <input type="text" class="form-control" id="libraryName" name="libraryName" placeholder="Enter library name" required>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">🚀 Create Asset</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-mQ93Yedr5Z76pGHbvrgHkxlg5DJAxmn5q5gW+J6BlrRxRlJ/Lo3Svv7Hjd+xErWg" crossorigin="anonymous"></script>
+
+</body>
+</html>

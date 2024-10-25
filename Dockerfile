@@ -40,12 +40,15 @@ RUN t=$(mktemp) && \
     rm "$t"
 
 # Install Python library
-RUN pip3 install apprise
+RUN pip3 install apprise flask
 
 # Install PowerShell module
 RUN pwsh -c "Install-Module FanartTvAPI -Force -SkipPublisherCheck -AllowPrerelease -Scope AllUsers"
 
 # Copy the s6-overlay run script and other necessary files
 COPY ./root/ /
+
+# Expose Flask port
+EXPOSE 1337
 
 VOLUME /config
