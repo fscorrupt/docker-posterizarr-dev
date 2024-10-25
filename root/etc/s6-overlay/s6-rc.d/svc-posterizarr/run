@@ -21,5 +21,13 @@ else
 fi
 
 # Start the PowerShell script with tini
-echo "start posterizarr main script"
-s6-setuidgid abc /usr/bin/tini -s -- pwsh /app/Start.ps1 --
+#echo "start posterizarr main script"
+#s6-setuidgid abc /usr/bin/tini -s -- pwsh /app/Start.ps1 --
+
+# Start the PowerShell script with tini
+echo "Starting Posterizarr PowerShell main script"
+s6-setuidgid abc /usr/bin/tini -s -- pwsh /app/Start.ps1 &
+
+# Start the Flask application
+echo "Starting Flask backend"
+s6-setuidgid abc /usr/bin/tini -s -- python3 /app/app.py &
