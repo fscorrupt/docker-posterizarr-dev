@@ -105,7 +105,7 @@ function ScriptSchedule {
 }
 function GetLatestScriptVersion {
     try {
-        return Invoke-RestMethod -Uri "https://github.com/fscorrupt/Posterizarr/raw/main/Release.txt" -Method Get -ErrorAction Stop
+        return Invoke-RestMethod -Uri "https://github.com/fscorrupt/Posterizarr/raw/dev/Release.txt" -Method Get -ErrorAction Stop
     }
     catch {
         Write-Host "Could not query latest script version, Error: $($_.Exception.Message)"
@@ -155,15 +155,15 @@ function Test-And-Download {
 
 # Download latest Script file
 $ProgressPreference = 'SilentlyContinue'
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/overlay.png" -destination /config/overlay.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/backgroundoverlay.png" -destination /config/backgroundoverlay.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Rocky.ttf" -destination /config/Rocky.ttf
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Colus-Regular.ttf" -destination /config/Colus-Regular.ttf
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/main/Comfortaa-Medium.ttf" -destination /config/Comfortaa-Medium.ttf
-Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/Posterizarr.ps1" -OutFile /config/Posterizarr.ps1
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/overlay.png" -destination /config/overlay.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/backgroundoverlay.png" -destination /config/backgroundoverlay.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Rocky.ttf" -destination /config/Rocky.ttf
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Colus-Regular.ttf" -destination /config/Colus-Regular.ttf
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Comfortaa-Medium.ttf" -destination /config/Comfortaa-Medium.ttf
+Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/dev/Posterizarr.ps1" -OutFile /config/Posterizarr.ps1
 # Only download config.example,json if config.json is missing
 if (-not (test-path "/config/config.json")) {
-    Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/main/config.example.json" -OutFile /config/config.example.json
+    Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/dev/config.example.json" -OutFile /config/config.example.json
 }
 $ProgressPreference = 'Continue'
 
