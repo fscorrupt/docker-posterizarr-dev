@@ -50,7 +50,7 @@ function ScriptSchedule {
                 Write-Warning "There is currently running another Process of Posterizarr, skipping this run."
             }
             Else {
-                pwsh /config/Posterizarr.ps1
+                pwsh /config/Posterizarr.ps1 -dev
             }
         }
         If ($Directory)
@@ -74,7 +74,7 @@ function ScriptSchedule {
                         $Scriptargs += " -$arg_name $arg_value"
                     }
                 }
-
+                $Scriptargs += " -dev"
                 write-host "Building trigger args..."
                 write-host "Calling Posterizarr with this args: $Scriptargs"
 
