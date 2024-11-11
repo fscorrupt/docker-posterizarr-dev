@@ -157,6 +157,8 @@ function Test-And-Download {
 $ProgressPreference = 'SilentlyContinue'
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/overlay.png" -destination /config/overlay.png
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/backgroundoverlay.png" -destination /config/backgroundoverlay.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/overlay-innerglow.png" -destination /config/overlay.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/backgroundoverlay-innerglow.png" -destination /config/backgroundoverlay.png
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Rocky.ttf" -destination /config/Rocky.ttf
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Colus-Regular.ttf" -destination /config/Colus-Regular.ttf
 Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Comfortaa-Medium.ttf" -destination /config/Comfortaa-Medium.ttf
