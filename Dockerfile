@@ -6,8 +6,8 @@ FROM lscr.io/linuxserver/baseimage-ubuntu:jammy
 # Labels
 LABEL maintainer=fscorrupt
 LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-posterizarr
-LABEL imagemagick.version=7.1.1.41
-LABEL powershell.version=7.4.6
+LABEL imagemagick.version=7.1.1.44
+LABEL powershell.version=7.5.0
 
 # Set the distribution channel for PowerShell
 ENV POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-Ubuntu-22.04
