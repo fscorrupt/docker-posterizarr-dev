@@ -1,12 +1,12 @@
 # Base Image
 # https://mcr.microsoft.com/en-us/product/powershell/tags
-# Imagemagick 7.1.1.41
+# Imagemagick 7.1.1.45
 FROM lscr.io/linuxserver/baseimage-ubuntu:jammy
 
 # Labels
 LABEL maintainer=fscorrupt
 LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-posterizarr
-LABEL imagemagick.version=7.1.1.44
+LABEL imagemagick.version=7.1.1.45
 LABEL powershell.version=7.5.0
 
 # Set the distribution channel for PowerShell
