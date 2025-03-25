@@ -5,7 +5,7 @@ FROM lscr.io/linuxserver/baseimage-ubuntu:jammy
 
 # Labels
 LABEL maintainer=fscorrupt
-LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-posterizarr
+LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-posterizarr-dev
 LABEL imagemagick.version=7.1.1.46
 LABEL powershell.version=7.5.0
 
