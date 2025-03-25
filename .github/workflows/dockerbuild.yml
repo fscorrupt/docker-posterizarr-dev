@@ -66,6 +66,8 @@ jobs:
           platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ghcr.io/${{ steps.prep.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           labels: |
             org.opencontainers.image.title=${{ steps.prep.outputs.title }}
             org.opencontainers.image.version=${{ steps.prep.outputs.version }}
