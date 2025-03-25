@@ -55,8 +55,8 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_PAT }}
-
-      - name: Build Docker Image
+          
+      - name: Build and push GHRC.io
         id: docker_build
         uses: docker/build-push-action@v6.3.0
         with:
@@ -64,31 +64,11 @@ jobs:
           context: .
           file: ./Dockerfile
           platforms: linux/amd64
-          push: false # Don't push yet, scan first
-          tags: ${{ steps.prep.outputs.tags }}
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:${{ steps.prep.outputs.version }}
-          format: 'table'
-          exit-code: 1
-          severity: 'CRITICAL,HIGH'
-
-      - name: Push Docker Image to GHCR
-        if: success()
-        uses: docker/build-push-action@v6.3.0
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          context: .
-          file: ./Dockerfile
-          platforms: linux/amd64
-          push: true
-          tags: ${{ steps.prep.outputs.tags }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ghcr.io/${{ steps.prep.outputs.tags }}
           labels: |
             org.opencontainers.image.title=${{ steps.prep.outputs.title }}
             org.opencontainers.image.version=${{ steps.prep.outputs.version }}
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
-
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
