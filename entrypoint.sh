@@ -2,4 +2,4 @@
 if [ -f /donate.txt ]; then cat /donate.txt; fi
 
 # Execute the main application
-exec pwsh -File /Start.ps1 "$@"
+exec pwsh -NoProfile -File /Start.ps1 "$@"
