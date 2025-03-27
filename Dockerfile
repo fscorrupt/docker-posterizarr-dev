@@ -6,7 +6,8 @@ ARG VERSION
 
 ENV UMASK="0002" \
     TZ="Europe/Berlin" \
-    POWERSHELL_DISTRIBUTION_CHANNEL="PSDocker"
+    POWERSHELL_DISTRIBUTION_CHANNEL="PSDocker" \
+    PosterizarrNonRoot="TRUE"
 
 RUN apk add --no-cache \
         catatonit \
