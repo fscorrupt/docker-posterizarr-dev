@@ -158,37 +158,10 @@ function Test-And-Download {
 
 # Download latest Script file
 $ProgressPreference = 'SilentlyContinue'
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/overlay.png" -destination /config/overlay.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/backgroundoverlay.png" -destination /config/backgroundoverlay.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/overlay-innerglow.png" -destination /config/overlay-innerglow.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/backgroundoverlay-innerglow.png" -destination /config/backgroundoverlay-innerglow.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Rocky.ttf" -destination /config/Rocky.ttf
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Colus-Regular.ttf" -destination /config/Colus-Regular.ttf
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Comfortaa-Medium.ttf" -destination /config/Comfortaa-Medium.ttf
-Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/dev/Posterizarr.ps1" -OutFile /config/Posterizarr.ps1
-# Only download config.example,json if config.json is missing
-if (-not (test-path "/config/config.json")) {
-    Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/dev/config.example.json" -OutFile /config/config.example.json
-}
 $ProgressPreference = 'Continue'
-
-# Create Folders
-if (-not (test-path "/config/Logs")) {
-    $null = New-Item -Path "/config/Logs" -ItemType Directory -ErrorAction SilentlyContinue
-}
-if (-not (test-path "/config/temp")) {
-    $null = New-Item -Path "/config/temp" -ItemType Directory -ErrorAction SilentlyContinue
-}
-if (-not (test-path "/config/watcher")) {
-    $null = New-Item -Path "/config/watcher" -ItemType Directory -ErrorAction SilentlyContinue
-}
-if (-not (test-path "/config/test")) {
-    $null = New-Item -Path "/config/test" -ItemType Directory -ErrorAction SilentlyContinue
-}
 
 # Checking Config file
 if (-not (test-path "/config/config.json")) {
-    Write-Host "Creating folder structure for you..."
     Write-Host ""
     Write-Host "Could not find a 'config.json' file" -ForegroundColor Red
     Write-Host "Please edit the config.example.json according to GH repo and save it as 'config.json'" -ForegroundColor Yellow

@@ -31,10 +31,14 @@ RUN apk add --no-cache \
     chown -R nobody:nogroup /.local && \
     chmod -R 777 /.local
 
+# Create directories inside /config
+RUN mkdir -p /config/Logs /config/temp /config/watcher /config/test
+
 # Copy application files
 COPY entrypoint.sh /entrypoint.sh
 COPY Start.ps1 /Start.ps1
 COPY donate.txt /donate.txt
+COPY files/ /config/
 
 # Fix file permissions in a single RUN command
 RUN chmod +x /entrypoint.sh \
