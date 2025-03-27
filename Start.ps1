@@ -1,6 +1,6 @@
 function ScriptSchedule {
     # Posterizarr File Watcher for Tautulli Recently Added Files
-    $inputDir = '/app/watcher'
+    $inputDir = '/config/watcher'
     $Scriptargs = "-Tautulli"
     $Directory = Get-ChildItem -Name $inputDir
 
@@ -50,7 +50,7 @@ function ScriptSchedule {
                 Write-Warning "There is currently running another Process of Posterizarr, skipping this run."
             }
             Else {
-                pwsh /app/Posterizarr.ps1 -dev
+                pwsh /config/Posterizarr.ps1 -dev
             }
         }
         If ($Directory)
@@ -79,7 +79,7 @@ function ScriptSchedule {
                 write-host "Calling Posterizarr with this args: $Scriptargs"
 
                 # Call Posterizarr with Args
-                pwsh -Command "/app/Posterizarr.ps1 $Scriptargs"
+                pwsh -Command "/config/Posterizarr.ps1 $Scriptargs"
 
                 # Reset scriptargs
                 $Scriptargs = "-Tautulli"
@@ -130,7 +130,7 @@ function CompareScriptVersion {
         $LatestImagemagickversion = $Versionmatching[0].Groups[1].Value.split('-')[0]
     }
     # Use Select-String to find the line containing the variable assignment
-    $lineContainingVersion = Select-String -Path "/app/Posterizarr.ps1" -Pattern '^\$CurrentScriptVersion\s*=\s*"([^"]+)"' | Select-Object -ExpandProperty Line
+    $lineContainingVersion = Select-String -Path "/config/Posterizarr.ps1" -Pattern '^\$CurrentScriptVersion\s*=\s*"([^"]+)"' | Select-Object -ExpandProperty Line
     $LatestScriptVersion = GetLatestScriptVersion
     if ($lineContainingVersion) {
         # Extract the version from the line
@@ -155,36 +155,36 @@ function Test-And-Download {
 
 # Download latest Script file
 $ProgressPreference = 'SilentlyContinue'
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/overlay.png" -destination /app/overlay.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/backgroundoverlay.png" -destination /app/backgroundoverlay.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/overlay-innerglow.png" -destination /app/overlay-innerglow.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/backgroundoverlay-innerglow.png" -destination /app/backgroundoverlay-innerglow.png
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Rocky.ttf" -destination /app/Rocky.ttf
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Colus-Regular.ttf" -destination /app/Colus-Regular.ttf
-Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Comfortaa-Medium.ttf" -destination /app/Comfortaa-Medium.ttf
-Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/dev/Posterizarr.ps1" -OutFile /app/Posterizarr.ps1
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/overlay.png" -destination /config/overlay.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/backgroundoverlay.png" -destination /config/backgroundoverlay.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/overlay-innerglow.png" -destination /config/overlay-innerglow.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/backgroundoverlay-innerglow.png" -destination /config/backgroundoverlay-innerglow.png
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Rocky.ttf" -destination /config/Rocky.ttf
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Colus-Regular.ttf" -destination /config/Colus-Regular.ttf
+Test-And-Download -url "https://github.com/fscorrupt/Posterizarr/raw/dev/Comfortaa-Medium.ttf" -destination /config/Comfortaa-Medium.ttf
+Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/dev/Posterizarr.ps1" -OutFile /config/Posterizarr.ps1
 # Only download config.example,json if config.json is missing
-if (-not (test-path "/app/config.json")) {
-    Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/dev/config.example.json" -OutFile /app/config.example.json
+if (-not (test-path "/config/config.json")) {
+    Invoke-WebRequest -uri "https://github.com/fscorrupt/Posterizarr/raw/dev/config.example.json" -OutFile /config/config.example.json
 }
 $ProgressPreference = 'Continue'
 
 # Create Folders
-if (-not (test-path "/app/Logs")) {
-    $null = New-Item -Path "/app/Logs" -ItemType Directory -ErrorAction SilentlyContinue
+if (-not (test-path "/config/Logs")) {
+    $null = New-Item -Path "/config/Logs" -ItemType Directory -ErrorAction SilentlyContinue
 }
-if (-not (test-path "/app/temp")) {
-    $null = New-Item -Path "/app/temp" -ItemType Directory -ErrorAction SilentlyContinue
+if (-not (test-path "/config/temp")) {
+    $null = New-Item -Path "/config/temp" -ItemType Directory -ErrorAction SilentlyContinue
 }
-if (-not (test-path "/app/watcher")) {
-    $null = New-Item -Path "/app/watcher" -ItemType Directory -ErrorAction SilentlyContinue
+if (-not (test-path "/config/watcher")) {
+    $null = New-Item -Path "/config/watcher" -ItemType Directory -ErrorAction SilentlyContinue
 }
-if (-not (test-path "/app/test")) {
-    $null = New-Item -Path "/app/test" -ItemType Directory -ErrorAction SilentlyContinue
+if (-not (test-path "/config/test")) {
+    $null = New-Item -Path "/config/test" -ItemType Directory -ErrorAction SilentlyContinue
 }
 
 # Checking Config file
-if (-not (test-path "/app/config.json")) {
+if (-not (test-path "/config/config.json")) {
     Write-Host "Creating folder structure for you..."
     Write-Host ""
     Write-Host "Could not find a 'config.json' file" -ForegroundColor Red
@@ -194,7 +194,7 @@ if (-not (test-path "/app/config.json")) {
     do {
         Start-Sleep 600
     } until (
-        test-path "/app/config.json"
+        test-path "/config/config.json"
     )
 }
 
@@ -212,7 +212,7 @@ if (-not $module) {
 }
 
 # Check temp dir if there is a Currently running file present
-$CurrentlyRunning = "/app/temp/Posterizarr.Running"
+$CurrentlyRunning = "/config/temp/Posterizarr.Running"
 
 # Clear Running File
 if (Test-Path $CurrentlyRunning) {

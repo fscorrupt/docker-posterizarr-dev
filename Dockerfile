@@ -21,10 +21,12 @@ RUN apk add --no-cache \
         Install-Module -Name FanartTvAPI -Scope AllUsers -Force" \
     && chmod -R 755 /usr/local/share/powershell \
     && pip install apprise \
-    && mkdir -p /app \
-    && chmod 755 /app \
-    && chown -R nobody:nogroup /app && chmod -R 777 /app
-
+    && mkdir -p /config \
+    && chmod 755 /config \
+    && chown -R nobody:nogroup /config && chmod -R 777 /config \
+    && mkdir -p /.local/share/powershell/PSReadLine && \
+    chown -R nobody:nogroup /.local && \
+    chmod -R 777 /.local
 
 # Copy application files
 COPY entrypoint.sh /entrypoint.sh
@@ -37,9 +39,9 @@ RUN chmod +x /entrypoint.sh \
 
 USER nobody:nogroup
 
-WORKDIR /app
+WORKDIR /config
 
-VOLUME ["/app"]
+VOLUME ["/config"]
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
 
