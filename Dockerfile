@@ -7,7 +7,9 @@ ARG VERSION
 ENV UMASK="0002" \
     TZ="Europe/Berlin" \
     POWERSHELL_DISTRIBUTION_CHANNEL="PSDocker" \
-    PosterizarrNonRoot="TRUE"
+    PosterizarrNonRoot="TRUE" \
+    PSModuleAnalysisCacheEnabled="false" \
+    PSModuleAnalysisCachePath=""
 
 RUN apk add --no-cache \
         catatonit \
@@ -18,7 +20,7 @@ RUN apk add --no-cache \
         libjpeg-turbo \
         powershell \
         tzdata \
-    && pwsh -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
+    && pwsh -NoProfile -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
         Install-Module -Name FanartTvAPI -Scope AllUsers -Force" \
     && chmod -R 755 /usr/local/share/powershell \
     && pip install apprise \
