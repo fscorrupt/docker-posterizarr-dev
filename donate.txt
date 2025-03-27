@@ -9,7 +9,8 @@
 ======================================================
 Ideas for the container were taken from:
 @DapperDrivers & @Onedr0p
-
+----------------------------------------------------
+----------------------------------------------------
 To support the projects visit:
 
 https://github.com/fscorrupt/Posterizarr

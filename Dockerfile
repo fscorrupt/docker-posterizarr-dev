@@ -22,7 +22,9 @@ RUN apk add --no-cache \
     && chmod -R 755 /usr/local/share/powershell \
     && pip install apprise \
     && mkdir -p /app \
-    && chmod 755 /app
+    && chmod 755 /app \
+    && chown -R nobody:nogroup /app && chmod -R 777 /app
+
 
 # Copy application files
 COPY entrypoint.sh /entrypoint.sh
