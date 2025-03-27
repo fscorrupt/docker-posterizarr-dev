@@ -1,52 +1,44 @@
-# Base Image
-# https://mcr.microsoft.com/en-us/product/powershell/tags
-# Imagemagick 7.1.1.46
-FROM lscr.io/linuxserver/baseimage-ubuntu:jammy
+FROM docker.io/library/python:3.13-alpine
 
-# Labels
-LABEL maintainer=fscorrupt
-LABEL org.opencontainers.image.source=https://github.com/fscorrupt/docker-posterizarr-dev
-LABEL imagemagick.version=7.1.1.46
-LABEL powershell.version=7.5.0
+ARG TARGETARCH
+ARG VENDOR
+ARG VERSION
 
-# Set the distribution channel for PowerShell
-ENV POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-Ubuntu-22.04
-ENV TZ=Europe/Berlin
-ENV DEBIAN_FRONTEND=noninteractive
+ENV UMASK="0002" \
+    TZ="Europe/Berlin" \
+    DEBCONF_NONINTERACTIVE_SEEN="true" \
+    DEBIAN_FRONTEND="noninteractive" \
+    POWERSHELL_DISTRIBUTION_CHANNEL="PSDocker"
 
-# Update the package list and install dependencies
-RUN apt-get update && apt-get upgrade -y \
-    && apt-get install -y \
-        python3 \
-        python3-pip \
-        tini \
-        docker.io \
-        wget \
+RUN \
+    apk add --no-cache \
+        catatonit \
+        curl \
+        imagemagick  \
+        imagemagick-heic \
+        imagemagick-jpeg \
+        libjpeg-turbo \
+        powershell \
         tzdata \
-        libicu70 \
-        liblttng-ust1 \
-    && apt-get clean
+    && \
+    pwsh -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
+        Install-Module -Name FanartTvAPI -Scope AllUsers -Force" \
+    && chmod -R 755 /usr/local/share/powershell \
+    && pip install apprise \
+    && mkdir -p /app/config && chmod 755 /app/config
 
-    # Download and install Microsoft repository for PowerShell
-RUN wget -q "https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb" && \
-    dpkg -i packages-microsoft-prod.deb && \
-    apt-get update && \
-    apt-get install -y powershell
+COPY entrypoint.sh /entrypoint.sh
+COPY Start.ps1 /Start.ps1
+COPY donate.txt /donate.txt
 
-# Install ImageMagick using BuildKit cache
-RUN --mount=type=cache,target=/var/cache/imagemagick \
-    t=$(mktemp) && \
-    wget 'https://dist.1-2.dev/imei.sh' -qO "$t" && \
-    bash "$t" && \
-    rm "$t"
+USER nobody:nogroup
 
-# Install Python library
-RUN pip3 install apprise
+WORKDIR /app
 
-# Install PowerShell module
-RUN pwsh -c "Install-Module FanartTvAPI -Force -SkipPublisherCheck -AllowPrerelease -Scope AllUsers"
+VOLUME ["/app"]
 
-# Copy the s6-overlay run script and other necessary files
-COPY ./root/ /
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
 
-VOLUME /config
+LABEL org.opencontainers.image.source="https://github.com/fscorrupt/Posterizarr"
+LABEL org.opencontainers.image.description="Posterizarr - Automated poster generation for Plex/Jellyfin/Emby media libraries"
+LABEL org.opencontainers.image.licenses="GPL-3.0"

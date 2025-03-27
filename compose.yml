@@ -1,21 +1,19 @@
 ---
 services:
   posterizarr:
-    hostname: "posterizarr"
-    container_name: "posterizarr"
+    hostname: "posterizarr-dev"
+    container_name: "posterizarr-dev"
     environment:
-      - "PGID=1000"
-      - "PUID=1000"
       - "TZ=Europe/Berlin"
-      - "UMASK=022"
       - "TERM=xterm"
       - "RUN_TIME=01:30,04:30,07:30,10:30,13:30,16:30,19:30,22:30"
-    image: "ghcr.io/fscorrupt/docker-posterizarr:latest"
+    image: "ghcr.io/fscorrupt/docker-posterizarr-dev:latest"
     restart: "unless-stopped"
+    user: "1000:1000"
     networks:
       - "proxy"
     volumes:
-      - "/opt/appdata/posterizarr:/config:rw"
+      - "/opt/appdata/posterizarr-dev:/config:rw"
       - "/mnt/unionfs2/assets:/assets:rw"
       - "/mnt/unionfs2/assetsbackup:/assetsbackup:rw"
       - "/mnt/unionfs2/manualassets:/manualassets:rw"
