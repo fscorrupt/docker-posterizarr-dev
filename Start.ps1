@@ -1,3 +1,6 @@
+$env:PSModuleAnalysisCachePath = $null
+$env:PSModuleAnalysisCacheEnabled = $false
+
 function ScriptSchedule {
     # Posterizarr File Watcher for Tautulli Recently Added Files
     $inputDir = '/config/watcher'
@@ -50,7 +53,7 @@ function ScriptSchedule {
                 Write-Warning "There is currently running another Process of Posterizarr, skipping this run."
             }
             Else {
-                pwsh /config/Posterizarr.ps1 -dev
+                pwsh -NoProfile /config/Posterizarr.ps1 -dev
             }
         }
         If ($Directory)
@@ -79,7 +82,7 @@ function ScriptSchedule {
                 write-host "Calling Posterizarr with this args: $Scriptargs"
 
                 # Call Posterizarr with Args
-                pwsh -Command "/config/Posterizarr.ps1 $Scriptargs"
+                pwsh -NoProfile -Command "/config/Posterizarr.ps1 $Scriptargs"
 
                 # Reset scriptargs
                 $Scriptargs = "-Tautulli"
