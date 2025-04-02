@@ -11,19 +11,31 @@ ENV UMASK="0002" \
     PSModuleAnalysisCacheEnabled="false" \
     PSModuleAnalysisCachePath=""
 
-RUN apk add --no-cache \
-        catatonit \
+# Install packages, create directories, copy files, and set permissions in a single RUN command to reduce layers
+RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories \
+    && echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories \
+    && apk upgrade --update-cache --available \
+    && apk update \
+    && apk add --no-cache \
         curl \
-        imagemagick  \
-        imagemagick-heic \
-        imagemagick-jpeg \
-        libjpeg-turbo \
+        imagemagick@edge \
+        imagemagick-libs@edge \
+        imagemagick-heic@edge \
+        imagemagick-jpeg@edge \
+        libjpeg-turbo-dev@edge \
         powershell \
         tzdata \
+        pango \
+        cairo \
+        fribidi \
+        harfbuzz \
+        ttf-dejavu \
+        ttf-freefont \
     && pwsh -NoProfile -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
         Install-Module -Name FanartTvAPI -Scope AllUsers -Force" \
     && chmod -R 755 /usr/local/share/powershell \
     && pip install apprise \
+    && mkdir -p /app && chmod -R 755 /app \
     && mkdir -p /config \
     && chmod 755 /config \
     && chown -R nobody:nogroup /config && chmod -R 777 /config \
