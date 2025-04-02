@@ -17,6 +17,7 @@ RUN echo @edge http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/r
     && apk upgrade --update-cache --available \
     && apk update \
     && apk add --no-cache \
+        catatonit \
         curl \
         imagemagick@edge \
         imagemagick-libs@edge \
