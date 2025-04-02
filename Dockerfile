@@ -26,6 +26,7 @@ RUN apk add --no-cache \
         harfbuzz \
         ttf-dejavu \
         ttf-freefont \
+        icu-libs \
     && pwsh -NoProfile -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
         Install-Module -Name FanartTvAPI -Scope AllUsers -Force" \
     && chmod -R 755 /usr/local/share/powershell \
