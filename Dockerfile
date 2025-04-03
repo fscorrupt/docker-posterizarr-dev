@@ -26,20 +26,11 @@ RUN apt-get update \
         tzdata \
     && rm -rf /var/lib/apt/lists/*
 
-# Check architecture and install PowerShell accordingly
-RUN if [ "$(uname -m)" = "x86_64" ]; then \
-        # For amd64 architecture
-        wget https://github.com/PowerShell/PowerShell/releases/download/v7.5.0/powershell_7.5.0-1.deb_amd64.deb \
-        && dpkg -i powershell_7.5.0-1.deb_amd64.deb \
-        && apt-get install -f -y \
-        && rm powershell_7.5.0-1.deb_amd64.deb; \
-    elif [ "$(uname -m)" = "aarch64" ]; then \
-        # For arm64 architecture
-        wget https://github.com/PowerShell/PowerShell/releases/download/v7.5.0/powershell_7.5.0-1.deb_arm64.deb \
-        && dpkg -i powershell_7.5.0-1.deb_arm64.deb \
-        && apt-get install -f -y \
-        && rm powershell_7.5.0-1.deb_arm64.deb; \
-    fi \
+# Install PowerShell based on the architecture (using TARGETARCH in URL)
+RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.5.0/powershell_7.5.0-1.deb_${TARGETARCH}.deb \
+    && dpkg -i powershell_7.5.0-1.deb_${TARGETARCH}.deb \
+    && apt-get install -f -y \
+    && rm powershell_7.5.0-1.deb_${TARGETARCH}.deb \
     && rm -rf /var/lib/apt/lists/* \
     && chmod -R 755 /usr/local/share/powershell
 
