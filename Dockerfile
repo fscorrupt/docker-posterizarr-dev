@@ -1,4 +1,4 @@
-FROM python:3.13-slim
+FROM docker.io/library/python:3.13-alpine
 
 ARG TARGETARCH
 ARG VENDOR
@@ -11,41 +11,35 @@ ENV UMASK="0002" \
     PSModuleAnalysisCacheEnabled="false" \
     PSModuleAnalysisCachePath=""
 
-# Install dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        ca-certificates \
-        wget \
-        curl \
+RUN apk add --no-cache \
         catatonit \
-        imagemagick \
-        libmagickcore-dev \
-        libmagickwand-dev \
-        ghostscript \
-        libjpeg62-turbo \
+        curl \
+        imagemagick  \
+        imagemagick-heic \
+        imagemagick-jpeg \
+        libjpeg-turbo \
+        powershell \
         tzdata \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install PowerShell based on the architecture (using TARGETARCH in URL)
-RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.5.0/powershell_7.5.0-1.deb_${TARGETARCH}.deb \
-    && dpkg -i powershell_7.5.0-1.deb_${TARGETARCH}.deb \
-    && apt-get install -f -y \
-    && rm powershell_7.5.0-1.deb_${TARGETARCH}.deb \
-    && rm -rf /var/lib/apt/lists/* \
-    && chmod -R 755 /usr/local/share/powershell
-
-# Install PowerShell Module
-RUN pwsh -NoProfile -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
-        Install-Module -Name FanartTvAPI -Scope AllUsers -Force"
-
-# Create necessary directories and set permissions
-RUN mkdir -p /config \
+        pango \
+        cairo \
+        fribidi \
+        harfbuzz \
+        ttf-dejavu \
+        ttf-freefont \
+        icu-libs \
+    && pwsh -NoProfile -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
+        Install-Module -Name FanartTvAPI -Scope AllUsers -Force" \
+    && chmod -R 755 /usr/local/share/powershell \
+    && pip install apprise \
+    && mkdir -p /config \
     && chmod 755 /config \
-    && chown -R nobody:nogroup /config \
-    && chmod -R 777 /config \
-    && mkdir -p /.local/share/powershell/PSReadLine \
-    && chown -R nobody:nogroup /.local \
-    && chmod -R 777 /.local
+    && chown -R nobody:nogroup /config && chmod -R 777 /config \
+    && mkdir -p /.local/share/powershell/PSReadLine && \
+    chown -R nobody:nogroup /.local && \
+    chmod -R 777 /.local
+
+# Create directories inside /config
+RUN mkdir -p /config/Logs /config/temp /config/watcher /config/test
 
 # Copy application files
 COPY entrypoint.sh /entrypoint.sh
@@ -53,7 +47,7 @@ COPY Start.ps1 /Start.ps1
 COPY donate.txt /donate.txt
 COPY files/ /config/
 
-# Set file permissions
+# Fix file permissions in a single RUN command
 RUN chmod +x /entrypoint.sh \
     && chown nobody:nogroup /entrypoint.sh
 
