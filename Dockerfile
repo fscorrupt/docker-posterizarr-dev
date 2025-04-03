@@ -25,7 +25,7 @@ RUN apt-get update \
         libjpeg62-turbo \
         tzdata \
     && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-    && echo "deb [arch=amd64,arm64] https://packages.microsoft.com/debian/$(lsb_release -rs)/prod $(lsb_release -cs) main" \
+    && echo "deb [arch=amd64,arm64] https://packages.microsoft.com/debian/bookworm/prod bookworm main" \
        | tee /etc/apt/sources.list.d/microsoft.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends powershell \
