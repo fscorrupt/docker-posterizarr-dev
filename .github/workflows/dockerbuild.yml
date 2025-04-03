@@ -18,8 +18,7 @@ jobs:
       - uses: FranzDiebold/github-env-vars-action@v2.8.0
       
       - name: Print architecture
-        run: |
-          echo "TARGETARCH=$matrix.architecture"
+        run: echo "TARGETARCH=${{ matrix.architecture }}"
         
       - name: Print environment variables
         run: |
@@ -80,6 +79,6 @@ jobs:
             org.opencontainers.image.version=${{ steps.prep.outputs.version }}
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
           build-args: |
-            TARGETARCH=${{ TARGETARCH }}
+            TARGETARCH=${{ matrix.architecture }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
