@@ -11,6 +11,7 @@ ENV UMASK="0002" \
     PSModuleAnalysisCacheEnabled="false" \
     PSModuleAnalysisCachePath=""
 
+# Install dependencies
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -23,24 +24,26 @@ RUN apt-get update \
         ghostscript \
         libjpeg62-turbo \
         tzdata \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install apprise \
-    && mkdir -p /config \
-    && chmod 755 /config \
-    && chown -R nobody:nogroup /config && chmod -R 777 /config \
-    
+    && rm -rf /var/lib/apt/lists/*
+
 # Manually download and install PowerShell
 RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.5.0/powershell_7.5.0-1.deb_amd64.deb \
     && dpkg -i powershell_7.5.0-1.deb_amd64.deb \
     && apt-get install -f -y \
-    && rm powershell_7.5.0-1.deb_amd64.deb \
-    && chmod -R 755 /usr/local/share/powershell \
-    && mkdir -p /.local/share/powershell/PSReadLine && \
-    chown -R nobody:nogroup /.local && \
-    chmod -R 777 /.local
-    
-# Create directories inside /config
-RUN mkdir -p /config/Logs /config/temp /config/watcher /config/test
+    && rm powershell_7.5.0-1.deb_amd64.deb
+
+# Install PowerShell Module
+RUN pwsh -NoProfile -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
+        Install-Module -Name FanartTvAPI -Scope AllUsers -Force"
+
+# Create necessary directories and set permissions
+RUN mkdir -p /config \
+    && chmod 755 /config \
+    && chown -R nobody:nogroup /config \
+    && chmod -R 777 /config \
+    && mkdir -p /.local/share/powershell/PSReadLine \
+    && chown -R nobody:nogroup /.local \
+    && chmod -R 777 /.local
 
 # Copy application files
 COPY entrypoint.sh /entrypoint.sh
@@ -48,7 +51,7 @@ COPY Start.ps1 /Start.ps1
 COPY donate.txt /donate.txt
 COPY files/ /config/
 
-# Fix file permissions
+# Set file permissions
 RUN chmod +x /entrypoint.sh \
     && chown nobody:nogroup /entrypoint.sh
 
