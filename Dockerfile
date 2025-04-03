@@ -11,16 +11,24 @@ ENV UMASK="0002" \
     PSModuleAnalysisCacheEnabled="false" \
     PSModuleAnalysisCachePath=""
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        catatonit \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        gnupg \
+        apt-transport-https \
         curl \
+        catatonit \
         imagemagick \
         libmagickcore-dev \
         libmagickwand-dev \
         ghostscript \
         libjpeg62-turbo \
-        powershell \
         tzdata \
+    && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && echo "deb [arch=amd64,arm64] https://packages.microsoft.com/debian/$(lsb_release -rs)/prod $(lsb_release -cs) main" \
+       | tee /etc/apt/sources.list.d/microsoft.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends powershell \
     && pwsh -NoProfile -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
         Install-Module -Name FanartTvAPI -Scope AllUsers -Force" \
     && rm -rf /var/lib/apt/lists/* \
