@@ -1,4 +1,4 @@
-FROM docker.io/library/python:3.13-alpine
+FROM python:3.13-slim
 
 ARG TARGETARCH
 ARG VENDOR
@@ -11,24 +11,26 @@ ENV UMASK="0002" \
     PSModuleAnalysisCacheEnabled="false" \
     PSModuleAnalysisCachePath=""
 
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
         catatonit \
         curl \
-        imagemagick  \
-        imagemagick-heic \
-        imagemagick-jpeg \
-        libjpeg-turbo \
-        powershell \
-        tzdata \
+        imagemagick \
+        libmagickcore-dev \
+        libmagickwand-dev \
+        ghostscript \
+        fonts-dejavu \
+        fonts-freefont-ttf \
         pango \
+        libpango1.0-0 \
         cairo \
-        fribidi \
+        libfribidi0 \
         harfbuzz \
-        ttf-dejavu \
-        ttf-freefont \
-        icu-libs \
+        icu-devtools \
+        tzdata \
+        powershell \
     && pwsh -NoProfile -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
         Install-Module -Name FanartTvAPI -Scope AllUsers -Force" \
+    && rm -rf /var/lib/apt/lists/* \
     && chmod -R 755 /usr/local/share/powershell \
     && pip install apprise \
     && mkdir -p /config \
@@ -47,7 +49,7 @@ COPY Start.ps1 /Start.ps1
 COPY donate.txt /donate.txt
 COPY files/ /config/
 
-# Fix file permissions in a single RUN command
+# Fix file permissions
 RUN chmod +x /entrypoint.sh \
     && chown nobody:nogroup /entrypoint.sh
 
