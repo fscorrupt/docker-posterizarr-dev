@@ -18,16 +18,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libmagickcore-dev \
         libmagickwand-dev \
         ghostscript \
-        fonts-dejavu \
-        fonts-freefont-ttf \
-        pango \
-        libpango1.0-0 \
-        cairo \
-        libfribidi0 \
-        harfbuzz \
-        icu-devtools \
-        tzdata \
+        libjpeg62-turbo \
         powershell \
+        tzdata \
     && pwsh -NoProfile -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
         Install-Module -Name FanartTvAPI -Scope AllUsers -Force" \
     && rm -rf /var/lib/apt/lists/* \
