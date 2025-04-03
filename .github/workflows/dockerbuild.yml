@@ -8,18 +8,12 @@ jobs:
   GHRC:
     runs-on: ubuntu-latest
     timeout-minutes: 360
-    strategy:
-      matrix:
-        architecture: [amd64, arm64]
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
 
       - uses: FranzDiebold/github-env-vars-action@v2.8.0
-      
-      - name: Print architecture
-        run: echo "TARGETARCH=${{ matrix.architecture }}"
-        
+
       - name: Print environment variables
         run: |
           echo "CI_REPOSITORY_NAME=$CI_REPOSITORY_NAME"
@@ -78,7 +72,5 @@ jobs:
             org.opencontainers.image.title=${{ steps.prep.outputs.title }}
             org.opencontainers.image.version=${{ steps.prep.outputs.version }}
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
-          build-args: |
-            TARGETARCH=${{ matrix.architecture }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
